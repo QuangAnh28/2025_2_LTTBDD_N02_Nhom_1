@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'screens/mainscreen.dart';
-
+import 'screens/giaodiencho.dart';
 void main() {
   runApp(const MyApp());
 }
@@ -14,7 +13,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Reading App',
       theme: ThemeData(useMaterial3: true),
-      home: const MainShell(),
+      home: const SplashScreen(),
     );
   }
 }
