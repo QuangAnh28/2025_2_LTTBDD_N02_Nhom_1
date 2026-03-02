@@ -25,6 +25,8 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final featuredBooks = fakeBooks.take(3).toList();
+    final recommended = fakeBooks.toList();
+    final popularBooks = fakeBooks.toList();
 
     return SafeArea(
       child: LayoutBuilder(
@@ -41,6 +43,57 @@ class _HomeScreenState extends State<HomeScreen> {
                     const SizedBox(height: 12),
                     _featuredSlider(featuredBooks),
                     const SizedBox(height: 14),
+
+                    _sectionTitle(
+                      title: 'Sách Đề Xuất',
+                      trailing: GestureDetector(
+                        onTap: () {},
+                        child: const Text(
+                          'Xem tất cả ›',
+                          style: TextStyle(
+                            color: Colors.black54,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    _bookRow(recommended),
+
+                    const SizedBox(height: 14),
+
+                    _sectionTitle(
+                      title: 'Sách Phổ Biến',
+                      trailing: GestureDetector(
+                        onTap: () {},
+                        child: const Text(
+                          'Xem tất cả ›',
+                          style: TextStyle(
+                            color: Colors.black54,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    _bookRow(popularBooks),
+
+                    const SizedBox(height: 14),
+
+                    _sectionTitle(
+                      title: 'Thể Loại Phổ Biến',
+                      trailing: GestureDetector(
+                        onTap: () {},
+                        child: const Icon(
+                          Icons.double_arrow_rounded,
+                          color: Color(0xFF1E88E5),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    _popularCategories(),
+
+                    const SizedBox(height: 8),
                   ],
                 ),
               ),
@@ -147,20 +200,14 @@ class _HomeScreenState extends State<HomeScreen> {
                   const SizedBox(height: 5),
                   Text(
                     book.author,
-                    style: const TextStyle(
-                      color: Colors.white70,
-                      fontWeight: FontWeight.w700,
-                    ),
+                    style: const TextStyle(color: Colors.white70, fontWeight: FontWeight.w700),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
                   const Spacer(),
                   Text(
                     'Đọc tới Chương ${book.currentChapter}',
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w800,
-                    ),
+                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w800),
                   ),
                   const SizedBox(height: 10),
                   Row(
@@ -172,9 +219,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             value: book.progress,
                             minHeight: 7,
                             backgroundColor: Colors.white24,
-                            valueColor: const AlwaysStoppedAnimation(
-                              Color(0xFFFFA64D),
-                            ),
+                            valueColor: const AlwaysStoppedAnimation(Color(0xFFFFA64D)),
                           ),
                         ),
                       ),
@@ -182,20 +227,14 @@ class _HomeScreenState extends State<HomeScreen> {
                       GestureDetector(
                         onTap: () {},
                         child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 10,
-                          ),
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                           decoration: BoxDecoration(
                             color: const Color(0xFFFFA64D),
                             borderRadius: BorderRadius.circular(14),
                           ),
                           child: const Text(
                             'Tiếp tục',
-                            style: TextStyle(
-                              fontWeight: FontWeight.w900,
-                              color: Colors.white,
-                            ),
+                            style: TextStyle(fontWeight: FontWeight.w900, color: Colors.white),
                           ),
                         ),
                       ),
@@ -222,4 +261,104 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
+
+  Widget _sectionTitle({required String title, required Widget trailing}) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w900)),
+        trailing,
+      ],
+    );
+  }
+
+  Widget _bookRow(List<Book> books) {
+    return SizedBox(
+      height: 140,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.only(right: 8),
+        itemCount: books.length,
+        separatorBuilder: (_, __) => const SizedBox(width: 12),
+        itemBuilder: (context, i) {
+          final b = books[i];
+          return GestureDetector(
+            onTap: () {},
+            child: Container(
+              width: 98,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(14),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.08),
+                    blurRadius: 12,
+                    offset: const Offset(0, 8),
+                  ),
+                ],
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(14),
+                child: AspectRatio(
+                  aspectRatio: 3 / 4,
+                  child: Image.asset(b.coverUrl, fit: BoxFit.cover),
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _popularCategories() {
+    final items = const [
+      _CatItem('Tiểu\nThuyết', Icons.menu_book_rounded, Color(0xFFFFE6D5)),
+      _CatItem('Khoa Học', Icons.science_rounded, Color(0xFFE6EDFF)),
+      _CatItem('Kinh Dị', Icons.visibility_rounded, Color(0xFFE7F7FF)),
+      _CatItem('Phiêu\nLưu', Icons.explore_rounded, Color(0xFFF1E7FF)),
+    ];
+
+    return SizedBox(
+      height: 96,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        itemCount: items.length,
+        separatorBuilder: (_, __) => const SizedBox(width: 12),
+        itemBuilder: (context, i) => _categoryTile(items[i]),
+      ),
+    );
+  }
+
+  Widget _categoryTile(_CatItem item) {
+    return GestureDetector(
+      onTap: () {},
+      child: Container(
+        width: 118,
+        height: 92,
+        decoration: BoxDecoration(
+          color: item.bg,
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(item.icon, size: 30, color: Colors.black87),
+            const SizedBox(height: 8),
+            Text(
+              item.title,
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontWeight: FontWeight.w900),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _CatItem {
+  final String title;
+  final IconData icon;
+  final Color bg;
+  const _CatItem(this.title, this.icon, this.bg);
 }
