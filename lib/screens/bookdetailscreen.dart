@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/book.dart';
+import 'package:flutter/services.dart';
 
 class BookDetailScreen extends StatefulWidget {
   final Book book;
@@ -35,7 +36,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
         ),
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: () => _shareBook(context, b),
             icon: const Icon(Icons.share_outlined),
           ),
         ],
@@ -65,7 +66,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
               ),
             ),
             const SizedBox(height: 18),
-            _actionRow(),
+            _actionRow(context),
             const SizedBox(height: 14),
             _ratingAndCategory(b),
             const SizedBox(height: 16),
@@ -96,55 +97,67 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
           child: Image.asset(
             b.coverUrl,
             fit: BoxFit.cover,
+            errorBuilder: (_, __, ___) {
+              return Container(
+                color: const Color(0xFFF3F4F6),
+                alignment: Alignment.center,
+                child: const Icon(Icons.image_not_supported_outlined, size: 36),
+              );
+            },
           ),
         ),
       ),
     );
   }
 
-  Widget _actionRow() {
+  Widget _actionRow(BuildContext context) {
     return Row(
       children: [
-        GestureDetector(
-          onTap: () => setState(() => _isFav = !_isFav),
-          child: Container(
-            width: 58,
-            height: 52,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(18),
-              border: Border.all(color: const Color(0xFFE5E7EB)),
-            ),
-            child: Icon(
-              _isFav ? Icons.favorite_rounded : Icons.favorite_border_rounded,
-              color: _isFav ? Colors.redAccent : Colors.black54,
+        Material(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(18),
+          child: InkWell(
+            onTap: () => setState(() => _isFav = !_isFav),
+            borderRadius: BorderRadius.circular(18),
+            child: Container(
+              width: 58,
+              height: 52,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(18),
+                border: Border.all(color: const Color(0xFFE5E7EB)),
+              ),
+              child: Icon(
+                _isFav ? Icons.favorite_rounded : Icons.favorite_border_rounded,
+                color: _isFav ? Colors.redAccent : Colors.black54,
+              ),
             ),
           ),
         ),
         const SizedBox(width: 12),
         Expanded(
-          child: GestureDetector(
-            onTap: () {},
-            child: Container(
-              height: 52,
-              decoration: BoxDecoration(
-                color: const Color(0xFF1976D2),
-                borderRadius: BorderRadius.circular(26),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: const [
-                  Icon(Icons.menu_book_rounded, color: Colors.white),
-                  SizedBox(width: 10),
-                  Text(
-                    'Bắt đầu đọc',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w900,
-                      fontSize: 16,
+          child: Material(
+            color: const Color(0xFF1976D2),
+            borderRadius: BorderRadius.circular(26),
+            child: InkWell(
+              onTap: () => _startReading(context),
+              borderRadius: BorderRadius.circular(26),
+              child: SizedBox(
+                height: 52,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: const [
+                    Icon(Icons.menu_book_rounded, color: Colors.white),
+                    SizedBox(width: 10),
+                    Text(
+                      'Bắt đầu đọc',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w900,
+                        fontSize: 16,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
@@ -170,12 +183,15 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                 Row(
                   children: List.generate(5, (i) {
                     final idx = i + 1;
-                    return GestureDetector(
+                    return InkWell(
                       onTap: () => setState(() => _rating = idx),
+                      borderRadius: BorderRadius.circular(10),
                       child: Padding(
                         padding: const EdgeInsets.only(right: 4),
                         child: Icon(
-                          _rating >= idx ? Icons.star_rounded : Icons.star_border_rounded,
+                          _rating >= idx
+                              ? Icons.star_rounded
+                              : Icons.star_border_rounded,
                           size: 22,
                           color: const Color(0xFFFFB300),
                         ),
@@ -199,11 +215,15 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
             children: [
               const Text(
                 'Danh mục',
-                style: TextStyle(color: Colors.black45, fontWeight: FontWeight.w700),
+                style: TextStyle(
+                  color: Colors.black45,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
               const SizedBox(height: 6),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 decoration: BoxDecoration(
                   color: const Color(0xFFE3F2FD),
                   borderRadius: BorderRadius.circular(999),
@@ -224,7 +244,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
   }
 
   Widget _descriptionCard(Book b) {
-    final text = b.description;
+    final text = _safeDesc(b);
     final showText = _expanded ? text : _shorten(text, 160);
 
     return Container(
@@ -252,23 +272,53 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
             ),
           ),
           const SizedBox(height: 10),
-          GestureDetector(
-            onTap: () => setState(() => _expanded = !_expanded),
-            child: Text(
-              _expanded ? 'Thu gọn ↑' : 'Xem thêm ↓',
-              style: const TextStyle(
-                color: Color(0xFF1976D2),
-                fontWeight: FontWeight.w900,
+          if (text.length > 160)
+            InkWell(
+              onTap: () => setState(() => _expanded = !_expanded),
+              child: Text(
+                _expanded ? 'Thu gọn ↑' : 'Xem thêm ↓',
+                style: const TextStyle(
+                  color: Color(0xFF1976D2),
+                  fontWeight: FontWeight.w900,
+                ),
               ),
             ),
-          ),
         ],
       ),
     );
   }
 
+  String _safeDesc(Book b) {
+    final dynamic bb = b;
+    try {
+      final String? d = bb.description as String?;
+      if (d != null && d.trim().isNotEmpty) return d;
+    } catch (_) {}
+    return 'Chưa có mô tả cho cuốn sách này.';
+  }
+
   String _shorten(String s, int max) {
     if (s.length <= max) return s;
     return '${s.substring(0, max)}...';
+  }
+
+  void _startReading(BuildContext context) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Bắt đầu đọc: ${widget.book.title}'),
+        duration: const Duration(seconds: 2),
+      ),
+    );
+  }
+
+  void _shareBook(BuildContext context, Book b) {
+    final text = '${b.title} - ${b.author}';
+    Clipboard.setData(ClipboardData(text: text));
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Đã copy thông tin sách'),
+        duration: Duration(seconds: 2),
+      ),
+    );
   }
 }
