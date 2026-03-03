@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import '../models/book.dart';
 import 'package:flutter/services.dart';
+import '../models/book.dart';
+import '../data/books.dart';
 
 class BookDetailScreen extends StatefulWidget {
   final Book book;
@@ -11,13 +12,12 @@ class BookDetailScreen extends StatefulWidget {
 }
 
 class _BookDetailScreenState extends State<BookDetailScreen> {
-  bool _isFav = false;
   bool _expanded = false;
   int _rating = 0;
 
   @override
   Widget build(BuildContext context) {
-    final b = widget.book;
+    final b = fakeBooks.firstWhere((e) => e.id == widget.book.id);
 
     return Scaffold(
       appBar: AppBar(
@@ -50,10 +50,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
             Text(
               b.title,
               textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.w900,
-              ),
+              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w900),
             ),
             const SizedBox(height: 6),
             Text(
@@ -66,7 +63,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
               ),
             ),
             const SizedBox(height: 18),
-            _actionRow(context),
+            _actionRow(b),
             const SizedBox(height: 14),
             _ratingAndCategory(b),
             const SizedBox(height: 16),
@@ -94,30 +91,28 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
         ),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(14),
-          child: Image.asset(
-            b.coverUrl,
-            fit: BoxFit.cover,
-            errorBuilder: (_, __, ___) {
-              return Container(
-                color: const Color(0xFFF3F4F6),
-                alignment: Alignment.center,
-                child: const Icon(Icons.image_not_supported_outlined, size: 36),
-              );
-            },
-          ),
+          child: Image.asset(b.coverUrl, fit: BoxFit.cover),
         ),
       ),
     );
   }
 
-  Widget _actionRow(BuildContext context) {
+  Widget _actionRow(Book b) {
     return Row(
       children: [
         Material(
           color: Colors.white,
           borderRadius: BorderRadius.circular(18),
           child: InkWell(
-            onTap: () => setState(() => _isFav = !_isFav),
+            onTap: () {
+              setState(() {
+                final index = fakeBooks.indexWhere((book) => book.id == b.id);
+
+                fakeBooks[index] = fakeBooks[index].copyWith(
+                  isFavorite: !fakeBooks[index].isFavorite,
+                );
+              });
+            },
             borderRadius: BorderRadius.circular(18),
             child: Container(
               width: 58,
@@ -127,8 +122,10 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                 border: Border.all(color: const Color(0xFFE5E7EB)),
               ),
               child: Icon(
-                _isFav ? Icons.favorite_rounded : Icons.favorite_border_rounded,
-                color: _isFav ? Colors.redAccent : Colors.black54,
+                b.isFavorite
+                    ? Icons.favorite_rounded
+                    : Icons.favorite_border_rounded,
+                color: b.isFavorite ? Colors.redAccent : Colors.black54,
               ),
             ),
           ),
@@ -141,11 +138,11 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
             child: InkWell(
               onTap: () => _startReading(context),
               borderRadius: BorderRadius.circular(26),
-              child: SizedBox(
+              child: const SizedBox(
                 height: 52,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
+                  children: [
                     Icon(Icons.menu_book_rounded, color: Colors.white),
                     SizedBox(width: 10),
                     Text(
@@ -177,66 +174,27 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
       child: Row(
         children: [
           Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: List.generate(5, (i) {
-                    final idx = i + 1;
-                    return InkWell(
-                      onTap: () => setState(() => _rating = idx),
-                      borderRadius: BorderRadius.circular(10),
-                      child: Padding(
-                        padding: const EdgeInsets.only(right: 4),
-                        child: Icon(
-                          _rating >= idx
-                              ? Icons.star_rounded
-                              : Icons.star_border_rounded,
-                          size: 22,
-                          color: const Color(0xFFFFB300),
-                        ),
-                      ),
-                    );
-                  }),
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  _rating == 0 ? 'Chưa có đánh giá' : '$_rating/5.0',
-                  style: const TextStyle(
-                    color: Colors.black54,
-                    fontWeight: FontWeight.w700,
+            child: Row(
+              children: List.generate(5, (i) {
+                final idx = i + 1;
+                return InkWell(
+                  onTap: () => setState(() => _rating = idx),
+                  child: Icon(
+                    _rating >= idx
+                        ? Icons.star_rounded
+                        : Icons.star_border_rounded,
+                    color: const Color(0xFFFFB300),
                   ),
-                ),
-              ],
+                );
+              }),
             ),
           ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              const Text(
-                'Danh mục',
-                style: TextStyle(
-                  color: Colors.black45,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-              const SizedBox(height: 6),
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFE3F2FD),
-                  borderRadius: BorderRadius.circular(999),
-                ),
-                child: Text(
-                  b.category,
-                  style: const TextStyle(
-                    color: Color(0xFF1976D2),
-                    fontWeight: FontWeight.w900,
-                  ),
-                ),
-              ),
-            ],
+          Text(
+            b.category,
+            style: const TextStyle(
+              color: Color(0xFF1976D2),
+              fontWeight: FontWeight.w900,
+            ),
           ),
         ],
       ),
@@ -244,81 +202,20 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
   }
 
   Widget _descriptionCard(Book b) {
-    final text = _safeDesc(b);
-    final showText = _expanded ? text : _shorten(text, 160);
-
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFE5E7EB)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'Giới thiệu nội dung',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w900),
-          ),
-          const SizedBox(height: 10),
-          Text(
-            showText,
-            style: const TextStyle(
-              fontSize: 14,
-              height: 1.45,
-              color: Colors.black87,
-            ),
-          ),
-          const SizedBox(height: 10),
-          if (text.length > 160)
-            InkWell(
-              onTap: () => setState(() => _expanded = !_expanded),
-              child: Text(
-                _expanded ? 'Thu gọn ↑' : 'Xem thêm ↓',
-                style: const TextStyle(
-                  color: Color(0xFF1976D2),
-                  fontWeight: FontWeight.w900,
-                ),
-              ),
-            ),
-        ],
-      ),
-    );
-  }
-
-  String _safeDesc(Book b) {
-    final dynamic bb = b;
-    try {
-      final String? d = bb.description as String?;
-      if (d != null && d.trim().isNotEmpty) return d;
-    } catch (_) {}
-    return 'Chưa có mô tả cho cuốn sách này.';
-  }
-
-  String _shorten(String s, int max) {
-    if (s.length <= max) return s;
-    return '${s.substring(0, max)}...';
+    return Text(b.description);
   }
 
   void _startReading(BuildContext context) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Bắt đầu đọc: ${widget.book.title}'),
-        duration: const Duration(seconds: 2),
-      ),
+      SnackBar(content: Text('Bắt đầu đọc: ${widget.book.title}')),
     );
   }
 
   void _shareBook(BuildContext context, Book b) {
     final text = '${b.title} - ${b.author}';
     Clipboard.setData(ClipboardData(text: text));
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Đã copy thông tin sách'),
-        duration: Duration(seconds: 2),
-      ),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('Đã copy thông tin sách')));
   }
 }

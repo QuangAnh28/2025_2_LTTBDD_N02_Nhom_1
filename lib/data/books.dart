@@ -1,6 +1,6 @@
 import '../models/book.dart';
 
-const List<Book> fakeBooks = [
+List<Book> fakeBooks = [
   Book(
     id: 'b1',
     title: 'Harry Potter',
