@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../data/books.dart';
 import '../widgets/categorychip.dart';
+import '../widgets/bookcard.dart';
 
 class ExploreScreen extends StatefulWidget {
   const ExploreScreen({super.key});
@@ -27,8 +28,6 @@ class _ExploreScreenState extends State<ExploreScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final query = _searchCtrl.text.trim();
-
     return SafeArea(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -58,9 +57,9 @@ class _ExploreScreenState extends State<ExploreScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: _chips(),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 10),
           Expanded(
-            child: _emptyState(query: query),
+            child: _buildContent(),
           ),
         ],
       ),
@@ -112,6 +111,45 @@ class _ExploreScreenState extends State<ExploreScreen> {
           onTap: () => setState(() => _selected = c),
         );
       }).toList(),
+    );
+  }
+
+  Widget _buildContent() {
+    final query = _searchCtrl.text.trim().toLowerCase();
+
+    final filtered = fakeBooks.where((book) {
+      final matchCategory =
+          _selected == 'Tất cả sách' || book.category == _selected;
+
+      final matchSearch = query.isEmpty ||
+          book.title.toLowerCase().contains(query) ||
+          book.author.toLowerCase().contains(query);
+
+      return matchCategory && matchSearch;
+    }).toList();
+
+    if (filtered.isEmpty) {
+      return _emptyState(query: query);
+    }
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: GridView.builder(
+        itemCount: filtered.length,
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          crossAxisSpacing: 14,
+          mainAxisSpacing: 14,
+          childAspectRatio: 0.72,
+        ),
+        itemBuilder: (context, index) {
+          final book = filtered[index];
+          return BookCard(
+            book: book,
+            onTap: () {},
+          );
+        },
+      ),
     );
   }
 
