@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../data/books.dart';
+import '../widgets/categorychip.dart';
 
 class ExploreScreen extends StatefulWidget {
   const ExploreScreen({super.key});
@@ -105,25 +106,10 @@ class _ExploreScreenState extends State<ExploreScreen> {
       runSpacing: 10,
       children: _categories.map((c) {
         final selected = c == _selected;
-        return GestureDetector(
+        return CategoryChip(
+          label: c,
+          selected: selected,
           onTap: () => setState(() => _selected = c),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-            decoration: BoxDecoration(
-              color: selected ? const Color(0xFF26A69A) : Colors.white,
-              borderRadius: BorderRadius.circular(999),
-              border: Border.all(
-                color: selected ? const Color(0xFF26A69A) : const Color(0xFFE5E7EB),
-              ),
-            ),
-            child: Text(
-              '#$c',
-              style: TextStyle(
-                fontWeight: FontWeight.w800,
-                color: selected ? Colors.white : Colors.black87,
-              ),
-            ),
-          ),
         );
       }).toList(),
     );
