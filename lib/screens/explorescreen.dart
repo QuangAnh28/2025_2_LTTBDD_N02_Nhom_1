@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../data/books.dart';
 import '../widgets/categorychip.dart';
 import '../widgets/bookcard.dart';
+import 'bookdetailscreen.dart';
 
 class ExploreScreen extends StatefulWidget {
   const ExploreScreen({super.key});
@@ -11,8 +12,8 @@ class ExploreScreen extends StatefulWidget {
 }
 
 class _ExploreScreenState extends State<ExploreScreen> {
-  final _searchCtrl = TextEditingController();
-  String _selected = 'Tất cả sách';
+  final TextEditingController _searchCtrl = TextEditingController();
+  String _selectedCategory = 'Tất cả sách';
 
   List<String> get _categories {
     final set = fakeBooks.map((e) => e.category).toSet().toList();
@@ -38,7 +39,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: _searchBox(),
           ),
-          const SizedBox(height: 14),
+          const SizedBox(height: 16),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Row(
@@ -55,7 +56,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
           const SizedBox(height: 12),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: _chips(),
+            child: _buildChips(),
           ),
           const SizedBox(height: 10),
           Expanded(
@@ -99,16 +100,21 @@ class _ExploreScreenState extends State<ExploreScreen> {
     );
   }
 
-  Widget _chips() {
+  Widget _buildChips() {
     return Wrap(
       spacing: 10,
       runSpacing: 10,
-      children: _categories.map((c) {
-        final selected = c == _selected;
+      children: _categories.map((category) {
+        final selected = category == _selectedCategory;
+
         return CategoryChip(
-          label: c,
+          label: category,
           selected: selected,
-          onTap: () => setState(() => _selected = c),
+          onTap: () {
+            setState(() {
+              _selectedCategory = category;
+            });
+          },
         );
       }).toList(),
     );
@@ -117,9 +123,10 @@ class _ExploreScreenState extends State<ExploreScreen> {
   Widget _buildContent() {
     final query = _searchCtrl.text.trim().toLowerCase();
 
-    final filtered = fakeBooks.where((book) {
+    final filteredBooks = fakeBooks.where((book) {
       final matchCategory =
-          _selected == 'Tất cả sách' || book.category == _selected;
+          _selectedCategory == 'Tất cả sách' ||
+              book.category == _selectedCategory;
 
       final matchSearch = query.isEmpty ||
           book.title.toLowerCase().contains(query) ||
@@ -128,14 +135,14 @@ class _ExploreScreenState extends State<ExploreScreen> {
       return matchCategory && matchSearch;
     }).toList();
 
-    if (filtered.isEmpty) {
-      return _emptyState(query: query);
+    if (filteredBooks.isEmpty) {
+      return _emptyState(query);
     }
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: GridView.builder(
-        itemCount: filtered.length,
+        itemCount: filteredBooks.length,
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
           crossAxisSpacing: 14,
@@ -143,29 +150,41 @@ class _ExploreScreenState extends State<ExploreScreen> {
           childAspectRatio: 0.72,
         ),
         itemBuilder: (context, index) {
-          final book = filtered[index];
+          final book = filteredBooks[index];
+
           return BookCard(
             book: book,
-            onTap: () {},
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => BookDetailScreen(book: book),
+                ),
+              );
+            },
           );
         },
       ),
     );
   }
 
-  Widget _emptyState({required String query}) {
-    final hint = query.isNotEmpty
+  Widget _emptyState(String query) {
+    final message = query.isNotEmpty
         ? 'Không tìm thấy kết quả cho "$query"'
-        : 'Tìm kiếm sách hoặc chọn danh mục để\nkhám phá';
+        : 'Tìm kiếm sách hoặc chọn danh mục để khám phá';
 
     return Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.search_rounded, size: 70, color: Colors.black.withOpacity(0.2)),
+          Icon(
+            Icons.search_rounded,
+            size: 70,
+            color: Colors.black.withOpacity(0.2),
+          ),
           const SizedBox(height: 14),
           Text(
-            hint,
+            message,
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 14,

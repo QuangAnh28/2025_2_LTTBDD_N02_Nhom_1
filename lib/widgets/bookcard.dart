@@ -14,7 +14,11 @@ class BookCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onTap,
+      onTap: () {
+  if (onTap != null) {
+    onTap!();
+  }
+},
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(14),
