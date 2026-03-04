@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../main.dart';
 import '../data/books.dart';
 import '../models/book.dart';
 import 'bookdetailscreen.dart';
@@ -34,9 +35,19 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final vi = MyApp.of(context).isVietnamese;
+
     final featuredBooks = fakeBooks.take(3).toList();
-    final recommended = fakeBooks.toList();
-    final popularBooks = fakeBooks.toList();
+
+    final query = _searchCtrl.text.trim().toLowerCase();
+    final filtered = fakeBooks.where((b) {
+      if (query.isEmpty) return true;
+      return b.title.toLowerCase().contains(query) ||
+          b.author.toLowerCase().contains(query);
+    }).toList();
+
+    final recommended = filtered.toList();
+    final popularBooks = filtered.toList();
 
     return SafeArea(
       child: LayoutBuilder(
@@ -49,18 +60,22 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _header(),
+                    _header(vi),
                     const SizedBox(height: 12),
-                    _featuredSlider(featuredBooks),
+
+                    _searchBox(vi),
+                    const SizedBox(height: 12),
+
+                    _featuredSlider(featuredBooks, vi),
                     const SizedBox(height: 14),
 
                     _sectionTitle(
-                      title: 'Sách Đề Xuất',
+                      title: vi ? 'Sách Đề Xuất' : 'Recommended',
                       trailing: GestureDetector(
                         onTap: () {},
-                        child: const Text(
-                          'Xem tất cả ›',
-                          style: TextStyle(
+                        child: Text(
+                          vi ? 'Xem tất cả ›' : 'See all ›',
+                          style: const TextStyle(
                             color: Colors.black54,
                             fontWeight: FontWeight.w700,
                           ),
@@ -73,12 +88,12 @@ class _HomeScreenState extends State<HomeScreen> {
                     const SizedBox(height: 14),
 
                     _sectionTitle(
-                      title: 'Sách Phổ Biến',
+                      title: vi ? 'Sách Phổ Biến' : 'Popular',
                       trailing: GestureDetector(
                         onTap: () {},
-                        child: const Text(
-                          'Xem tất cả ›',
-                          style: TextStyle(
+                        child: Text(
+                          vi ? 'Xem tất cả ›' : 'See all ›',
+                          style: const TextStyle(
                             color: Colors.black54,
                             fontWeight: FontWeight.w700,
                           ),
@@ -91,7 +106,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     const SizedBox(height: 14),
 
                     _sectionTitle(
-                      title: 'Thể Loại Phổ Biến',
+                      title: vi ? 'Thể Loại Phổ Biến' : 'Popular Categories',
                       trailing: GestureDetector(
                         onTap: () {},
                         child: const Icon(
@@ -101,7 +116,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                     const SizedBox(height: 10),
-                    _popularCategories(),
+                    _popularCategories(vi),
 
                     const SizedBox(height: 8),
                   ],
@@ -114,7 +129,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _header() {
+  Widget _header(bool vi) {
     return Row(
       children: [
         const CircleAvatar(
@@ -122,10 +137,10 @@ class _HomeScreenState extends State<HomeScreen> {
           backgroundImage: AssetImage('assets/images/logobookify.png'),
         ),
         const SizedBox(width: 10),
-        const Expanded(
+        Expanded(
           child: Text(
-            'Xin chào!',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
+            vi ? 'Xin chào!' : 'Hello!',
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
           ),
         ),
         IconButton(
@@ -136,7 +151,24 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _featuredSlider(List<Book> books) {
+  Widget _searchBox(bool vi) {
+    return TextField(
+      controller: _searchCtrl,
+      onChanged: (_) => setState(() {}),
+      decoration: InputDecoration(
+        hintText: vi ? 'Tìm kiếm sách...' : 'Search books...',
+        prefixIcon: const Icon(Icons.search),
+        filled: true,
+        fillColor: const Color(0xFFF3F4F6),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: BorderSide.none,
+        ),
+      ),
+    );
+  }
+
+  Widget _featuredSlider(List<Book> books, bool vi) {
     return Column(
       children: [
         SizedBox(
@@ -145,7 +177,7 @@ class _HomeScreenState extends State<HomeScreen> {
             controller: _featuredCtrl,
             itemCount: books.length,
             onPageChanged: (i) => setState(() => _featuredIndex = i),
-            itemBuilder: (context, i) => _featuredCard(books[i]),
+            itemBuilder: (context, i) => _featuredCard(books[i], vi),
           ),
         ),
         const SizedBox(height: 8),
@@ -157,7 +189,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _featuredCard(Book book) {
+  Widget _featuredCard(Book book, bool vi) {
     return GestureDetector(
       onTap: () => _openDetail(book),
       child: Container(
@@ -221,7 +253,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     const Spacer(),
                     Text(
-                      'Đọc tới Chương ${book.currentChapter}',
+                      vi
+                          ? 'Đọc tới Chương ${book.currentChapter}'
+                          : 'Continue at Chapter ${book.currentChapter}',
                       style: const TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.w800,
@@ -237,7 +271,9 @@ class _HomeScreenState extends State<HomeScreen> {
                               value: book.progress,
                               minHeight: 7,
                               backgroundColor: Colors.white24,
-                              valueColor: const AlwaysStoppedAnimation(Color(0xFFFFA64D)),
+                              valueColor: const AlwaysStoppedAnimation(
+                                Color(0xFFFFA64D),
+                              ),
                             ),
                           ),
                         ),
@@ -245,14 +281,17 @@ class _HomeScreenState extends State<HomeScreen> {
                         GestureDetector(
                           onTap: () => _openDetail(book),
                           child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 10,
+                            ),
                             decoration: BoxDecoration(
                               color: const Color(0xFFFFA64D),
                               borderRadius: BorderRadius.circular(14),
                             ),
-                            child: const Text(
-                              'Tiếp tục',
-                              style: TextStyle(
+                            child: Text(
+                              vi ? 'Tiếp tục' : 'Continue',
+                              style: const TextStyle(
                                 fontWeight: FontWeight.w900,
                                 color: Colors.white,
                               ),
@@ -288,7 +327,10 @@ class _HomeScreenState extends State<HomeScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w900)),
+        Text(
+          title,
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w900),
+        ),
         trailing,
       ],
     );
@@ -332,13 +374,20 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _popularCategories() {
-    final items = const [
-      _CatItem('Tiểu\nThuyết', Icons.menu_book_rounded, Color(0xFFFFE6D5)),
-      _CatItem('Khoa Học', Icons.science_rounded, Color(0xFFE6EDFF)),
-      _CatItem('Kinh Dị', Icons.visibility_rounded, Color(0xFFE7F7FF)),
-      _CatItem('Phiêu\nLưu', Icons.explore_rounded, Color(0xFFF1E7FF)),
-    ];
+  Widget _popularCategories(bool vi) {
+    final items = vi
+        ? const [
+            _CatItem('Tiểu\nThuyết', Icons.menu_book_rounded, Color(0xFFFFE6D5)),
+            _CatItem('Khoa Học', Icons.science_rounded, Color(0xFFE6EDFF)),
+            _CatItem('Kinh Dị', Icons.visibility_rounded, Color(0xFFE7F7FF)),
+            _CatItem('Phiêu\nLưu', Icons.explore_rounded, Color(0xFFF1E7FF)),
+          ]
+        : const [
+            _CatItem('Novel', Icons.menu_book_rounded, Color(0xFFFFE6D5)),
+            _CatItem('Science', Icons.science_rounded, Color(0xFFE6EDFF)),
+            _CatItem('Horror', Icons.visibility_rounded, Color(0xFFE7F7FF)),
+            _CatItem('Adventure', Icons.explore_rounded, Color(0xFFF1E7FF)),
+          ];
 
     return SizedBox(
       height: 96,

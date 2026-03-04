@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import '../main.dart';
 import '../data/books.dart';
 
 class StatsScreen extends StatelessWidget {
@@ -7,72 +8,66 @@ class StatsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final vi = MyApp.of(context).isVietnamese;
+
     final totalBooks = fakeBooks.length;
 
-    final totalChaptersRead = fakeBooks.fold(
-      0,
-      (sum, book) => sum + book.currentChapter,
-    );
+    final totalChaptersRead =
+        fakeBooks.fold<int>(0, (sum, book) => sum + book.currentChapter);
 
     final completedBooks = fakeBooks.where((book) => book.isCompleted).length;
 
-    final totalMinutes = fakeBooks.fold(
-      0,
-      (sum, book) => sum + book.minutesRead,
-    );
+    final totalMinutes =
+        fakeBooks.fold<int>(0, (sum, book) => sum + book.minutesRead);
 
     final avgMinutesPerDay = totalMinutes == 0 ? 0 : (totalMinutes / 7).round();
 
     final avgProgress = totalBooks == 0
         ? 0.0
-        : fakeBooks.fold(0.0, (sum, book) => sum + book.progress) / totalBooks;
+        : fakeBooks.fold<double>(0.0, (sum, book) => sum + book.progress) /
+            totalBooks;
+
+    final progressPercent = (avgProgress * 100).clamp(0.0, 100.0);
 
     return SafeArea(
       child: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            buildTotalPagesCard(totalChaptersRead),
-
+            _buildTotalChaptersCard(totalChaptersRead, vi),
             const SizedBox(height: 20),
-
-            if (fakeBooks.isNotEmpty) buildChartCard(),
-
+            if (fakeBooks.isNotEmpty) _buildChartCard(vi),
             const SizedBox(height: 20),
-
-            buildTimeAndBooksCard(avgMinutesPerDay, completedBooks),
-
+            _buildTimeAndBooksCard(avgMinutesPerDay, completedBooks, vi),
             const SizedBox(height: 20),
-
-            buildGoalCard(completedBooks),
-
+            _buildGoalCard(completedBooks, vi),
             const SizedBox(height: 20),
-
-            buildInfoCard("📚 Tổng số sách", totalBooks.toString()),
-            buildInfoCard("⏳ Tổng phút đọc", "$totalMinutes phút"),
-
+            _buildInfoCard(
+              vi ? "📚 Tổng số sách" : "📚 Total books",
+              totalBooks.toString(),
+            ),
+            _buildInfoCard(
+              vi ? "⏳ Tổng phút đọc" : "⏳ Total minutes",
+              vi ? "$totalMinutes phút" : "$totalMinutes min",
+            ),
             const SizedBox(height: 20),
-
             Align(
               alignment: Alignment.centerLeft,
-              child: const Text(
-                "📈 Tiến trình trung bình",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              child: Text(
+                vi ? "📈 Tiến trình trung bình" : "📈 Average progress",
+                style:
+                    const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
             ),
-
             const SizedBox(height: 10),
-
             LinearProgressIndicator(
               value: avgProgress.clamp(0.0, 1.0),
               minHeight: 10,
               borderRadius: BorderRadius.circular(10),
             ),
-
             const SizedBox(height: 6),
-
             Text(
-              "${(avgProgress * 100).toStringAsFixed(1)}%",
+              "${progressPercent.toStringAsFixed(1)}%",
               style: const TextStyle(fontWeight: FontWeight.bold),
             ),
           ],
@@ -82,9 +77,9 @@ class StatsScreen extends StatelessWidget {
   }
 
   // =======================
-  // CARD TỔNG CHƯƠNG
+  // CARD: TOTAL CHAPTERS
   // =======================
-  Widget buildTotalPagesCard(int totalPagesRead) {
+  Widget _buildTotalChaptersCard(int totalChaptersRead, bool vi) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -102,13 +97,13 @@ class StatsScreen extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                "Tổng số chương đã đọc",
-                style: TextStyle(color: Colors.white),
+              Text(
+                vi ? "Tổng số chương đã đọc" : "Total chapters read",
+                style: const TextStyle(color: Colors.white),
               ),
               const SizedBox(height: 8),
               Text(
-                "$totalPagesRead chương",
+                vi ? "$totalChaptersRead chương" : "$totalChaptersRead chapters",
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 30,
@@ -124,36 +119,91 @@ class StatsScreen extends StatelessWidget {
   }
 
   // =======================
-  // BIỂU ĐỒ CỘT
+  // BAR CHART
   // =======================
-  Widget buildChartCard() {
+  Widget _buildChartCard(bool vi) {
+    final takeN = fakeBooks.length > 4 ? 4 : fakeBooks.length;
+
     final maxChapter = fakeBooks
-        .map((book) => book.currentChapter)
-        .reduce((a, b) => a > b ? a : b);
+        .take(takeN)
+        .map((b) => b.currentChapter)
+        .fold<int>(0, (m, v) => v > m ? v : m);
+
+    final maxY = (maxChapter + 5).toDouble().clamp(5.0, 9999.0);
 
     return Container(
-      height: 250,
+      height: 270,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
         boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 8)],
       ),
-      child: BarChart(
-        BarChartData(
-          alignment: BarChartAlignment.spaceAround,
-          maxY: (maxChapter + 5).toDouble(),
-          barGroups: List.generate(
-            fakeBooks.length > 4 ? 4 : fakeBooks.length,
-            (index) =>
-                makeGroup(index, fakeBooks[index].currentChapter.toDouble()),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            vi ? "📊 Chương đã đọc (Top $takeN)" : "📊 Chapters read (Top $takeN)",
+            style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 16),
           ),
-        ),
+          const SizedBox(height: 12),
+          Expanded(
+            child: BarChart(
+              BarChartData(
+                alignment: BarChartAlignment.spaceAround,
+                maxY: maxY,
+                gridData: FlGridData(show: true),
+                borderData: FlBorderData(show: false),
+                barTouchData: BarTouchData(enabled: true),
+                titlesData: FlTitlesData(
+                  topTitles:
+                      const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                  rightTitles:
+                      const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                  leftTitles: AxisTitles(
+                    sideTitles: SideTitles(
+                      showTitles: true,
+                      reservedSize: 30,
+                      interval: (maxY / 4).clamp(1, 10),
+                    ),
+                  ),
+                  bottomTitles: AxisTitles(
+                    sideTitles: SideTitles(
+                      showTitles: true,
+                      reservedSize: 28,
+                      getTitlesWidget: (value, meta) {
+                        final i = value.toInt();
+                        if (i < 0 || i >= takeN) return const SizedBox.shrink();
+                        return Padding(
+                          padding: const EdgeInsets.only(top: 6),
+                          child: Text(
+                            "B${i + 1}",
+                            style: const TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w800,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ),
+                barGroups: List.generate(
+                  takeN,
+                  (index) => _makeGroup(
+                    index,
+                    fakeBooks[index].currentChapter.toDouble(),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
 
-  BarChartGroupData makeGroup(int x, double y) {
+  BarChartGroupData _makeGroup(int x, double y) {
     return BarChartGroupData(
       x: x,
       barRods: [
@@ -168,21 +218,29 @@ class StatsScreen extends StatelessWidget {
   }
 
   // =======================
-  // BƯỚC 5 — CARD THỜI GIAN & SÁCH
+  // TIME & COMPLETED
   // =======================
-  Widget buildTimeAndBooksCard(int avgMinutes, int completedBooks) {
+  Widget _buildTimeAndBooksCard(int avgMinutes, int completedBooks, bool vi) {
     return Row(
       children: [
         Expanded(
-          child: buildSmallCard("Thời Gian Đọc", "$avgMinutes phút/ngày"),
+          child: _buildSmallCard(
+            vi ? "Thời Gian Đọc" : "Reading time",
+            vi ? "$avgMinutes phút/ngày" : "$avgMinutes min/day",
+          ),
         ),
         const SizedBox(width: 12),
-        Expanded(child: buildSmallCard("Sách Đã Đọc", "$completedBooks cuốn")),
+        Expanded(
+          child: _buildSmallCard(
+            vi ? "Sách Đã Đọc" : "Completed books",
+            vi ? "$completedBooks cuốn" : "$completedBooks books",
+          ),
+        ),
       ],
     );
   }
 
-  Widget buildSmallCard(String title, String value) {
+  Widget _buildSmallCard(String title, String value) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -193,7 +251,7 @@ class StatsScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title),
+          Text(title, style: const TextStyle(fontWeight: FontWeight.w700)),
           const SizedBox(height: 8),
           Text(
             value,
@@ -205,9 +263,9 @@ class StatsScreen extends StatelessWidget {
   }
 
   // =======================
-  // BƯỚC 6 — MỤC TIÊU
+  // GOAL
   // =======================
-  Widget buildGoalCard(int completedBooks) {
+  Widget _buildGoalCard(int completedBooks, bool vi) {
     const int goal = 20;
     final double percent = (completedBooks / goal).clamp(0.0, 1.0);
 
@@ -221,7 +279,10 @@ class StatsScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text("🎯 Mục tiêu năm"),
+          Text(
+            vi ? "🎯 Mục tiêu năm" : "🎯 Year goal",
+            style: const TextStyle(fontWeight: FontWeight.w900),
+          ),
           const SizedBox(height: 8),
           LinearProgressIndicator(
             value: percent,
@@ -229,16 +290,21 @@ class StatsScreen extends StatelessWidget {
             borderRadius: BorderRadius.circular(10),
           ),
           const SizedBox(height: 8),
-          Text("${(percent * 100).toInt()}% hoàn thành"),
+          Text(
+            vi
+                ? "${(percent * 100).toInt()}% hoàn thành"
+                : "${(percent * 100).toInt()}% completed",
+            style: const TextStyle(fontWeight: FontWeight.w700),
+          ),
         ],
       ),
     );
   }
 
   // =======================
-  // CARD INFO NHỎ
+  // INFO CARD
   // =======================
-  Widget buildInfoCard(String title, String value) {
+  Widget _buildInfoCard(String title, String value) {
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       margin: const EdgeInsets.only(bottom: 12),

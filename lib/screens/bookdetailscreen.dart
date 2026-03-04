@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../models/book.dart';
 import '../data/books.dart';
+import '../main.dart';
 
 class BookDetailScreen extends StatefulWidget {
   final Book book;
@@ -17,9 +18,13 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final b = fakeBooks.firstWhere((e) => e.id == widget.book.id);
+    final appState = MyApp.of(context);
+    final vi = appState.isVietnamese;
+
+    final b = _getBookById(widget.book.id);
 
     return Scaffold(
+      backgroundColor: const Color(0xfff2f2f2),
       appBar: AppBar(
         backgroundColor: const Color(0xFF1976D2),
         foregroundColor: Colors.white,
@@ -36,7 +41,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
         ),
         actions: [
           IconButton(
-            onPressed: () => _shareBook(context, b),
+            onPressed: () => _shareBook(context, b, vi),
             icon: const Icon(Icons.share_outlined),
           ),
         ],
@@ -63,15 +68,21 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
               ),
             ),
             const SizedBox(height: 18),
-            _actionRow(b),
+            _actionRow(b, vi),
             const SizedBox(height: 14),
-            _ratingAndCategory(b),
+            _ratingAndCategory(b, vi),
             const SizedBox(height: 16),
-            _descriptionCard(b),
+            _descriptionCard(b, vi),
           ],
         ),
       ),
     );
+  }
+
+  Book _getBookById(String id) {
+    final idx = fakeBooks.indexWhere((e) => e.id == id);
+    if (idx == -1) return widget.book;
+    return fakeBooks[idx];
   }
 
   Widget _cover(Book b) {
@@ -97,7 +108,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
     );
   }
 
-  Widget _actionRow(Book b) {
+  Widget _actionRow(Book b, bool vi) {
     return Row(
       children: [
         Material(
@@ -107,6 +118,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
             onTap: () {
               setState(() {
                 final index = fakeBooks.indexWhere((book) => book.id == b.id);
+                if (index == -1) return;
 
                 fakeBooks[index] = fakeBooks[index].copyWith(
                   isFavorite: !fakeBooks[index].isFavorite,
@@ -136,18 +148,18 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
             color: const Color(0xFF1976D2),
             borderRadius: BorderRadius.circular(26),
             child: InkWell(
-              onTap: () => _startReading(context),
+              onTap: () => _startReading(context, b, vi),
               borderRadius: BorderRadius.circular(26),
-              child: const SizedBox(
+              child: SizedBox(
                 height: 52,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.menu_book_rounded, color: Colors.white),
-                    SizedBox(width: 10),
+                    const Icon(Icons.menu_book_rounded, color: Colors.white),
+                    const SizedBox(width: 10),
                     Text(
-                      'Bắt đầu đọc',
-                      style: TextStyle(
+                      vi ? 'Bắt đầu đọc' : 'Start reading',
+                      style: const TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.w900,
                         fontSize: 16,
@@ -163,7 +175,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
     );
   }
 
-  Widget _ratingAndCategory(Book b) {
+  Widget _ratingAndCategory(Book b, bool vi) {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
@@ -201,21 +213,75 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
     );
   }
 
-  Widget _descriptionCard(Book b) {
-    return Text(b.description);
-  }
+  Widget _descriptionCard(Book b, bool vi) {
+    final title = vi ? "Mô tả" : "Description";
+    final more = vi ? "Xem thêm" : "Read more";
+    final less = vi ? "Thu gọn" : "Show less";
 
-  void _startReading(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Bắt đầu đọc: ${widget.book.title}')),
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFFE5E7EB)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 16),
+          ),
+          const SizedBox(height: 10),
+          Text(
+            b.description,
+            maxLines: _expanded ? null : 5,
+            overflow: _expanded ? TextOverflow.visible : TextOverflow.ellipsis,
+            style: const TextStyle(
+              color: Colors.black87,
+              height: 1.35,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          const SizedBox(height: 10),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: InkWell(
+              onTap: () => setState(() => _expanded = !_expanded),
+              child: Text(
+                _expanded ? less : more,
+                style: const TextStyle(
+                  color: Color(0xFF1976D2),
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
-  void _shareBook(BuildContext context, Book b) {
+  void _startReading(BuildContext context, Book b, bool vi) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          vi ? 'Bắt đầu đọc: ${b.title}' : 'Start reading: ${b.title}',
+        ),
+      ),
+    );
+  }
+
+  void _shareBook(BuildContext context, Book b, bool vi) {
     final text = '${b.title} - ${b.author}';
     Clipboard.setData(ClipboardData(text: text));
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text('Đã copy thông tin sách')));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          vi ? 'Đã copy thông tin sách' : 'Copied book info',
+        ),
+      ),
+    );
   }
 }
