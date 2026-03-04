@@ -7,10 +7,14 @@ class Book {
   final String description;
 
   final int totalChapters;
-  int currentChapter; // ❗ bỏ final để có thể cập nhật
+  int currentChapter;
 
   bool isFavorite;
   bool isBookmarked;
+
+  // 🔥 Thêm cho thống kê
+  int minutesRead; // tổng phút đã đọc
+  bool isCompleted; // đã đọc xong chưa
 
   Book({
     required this.id,
@@ -23,15 +27,24 @@ class Book {
     required this.currentChapter,
     this.isFavorite = false,
     this.isBookmarked = false,
+    this.minutesRead = 0,
+    this.isCompleted = false,
   });
 
-  // Tính % đọc
+  // % tiến trình
   double get progress {
     if (totalChapters <= 0) return 0;
     final p = currentChapter / totalChapters;
     if (p < 0) return 0;
     if (p > 1) return 1;
     return p;
+  }
+
+  // 🔥 tự động kiểm tra hoàn thành
+  void checkCompleted() {
+    if (currentChapter >= totalChapters) {
+      isCompleted = true;
+    }
   }
 
   Book copyWith({
@@ -45,6 +58,8 @@ class Book {
     int? currentChapter,
     bool? isFavorite,
     bool? isBookmarked,
+    int? minutesRead,
+    bool? isCompleted,
   }) {
     return Book(
       id: id ?? this.id,
@@ -57,6 +72,8 @@ class Book {
       currentChapter: currentChapter ?? this.currentChapter,
       isFavorite: isFavorite ?? this.isFavorite,
       isBookmarked: isBookmarked ?? this.isBookmarked,
+      minutesRead: minutesRead ?? this.minutesRead,
+      isCompleted: isCompleted ?? this.isCompleted,
     );
   }
 }
