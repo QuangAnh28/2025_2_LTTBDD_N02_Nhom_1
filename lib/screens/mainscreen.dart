@@ -15,28 +15,45 @@ class MainShell extends StatefulWidget {
 class _MainShellState extends State<MainShell> {
   int _index = 0;
 
-  final _screens = const [
-    HomeScreen(),
-    ExploreScreen(),
-    LibraryScreen(),
-    StatsScreen(),
-    SettingsScreen(),
-  ];
-
   @override
   Widget build(BuildContext context) {
+    final isVietnamese = Localizations.localeOf(context).languageCode == 'vi';
+
+    final screens = const [
+      HomeScreen(),
+      ExploreScreen(),
+      LibraryScreen(),
+      StatsScreen(),
+      SettingsScreen(),
+    ];
+
     return Scaffold(
-      body: _screens[_index],
+      body: screens[_index],
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _index,
         onTap: (i) => setState(() => _index = i),
         type: BottomNavigationBarType.fixed,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: 'Trang chủ'),
-          BottomNavigationBarItem(icon: Icon(Icons.explore_outlined), label: 'Khám phá'),
-          BottomNavigationBarItem(icon: Icon(Icons.library_books_outlined), label: 'Thư viện'),
-          BottomNavigationBarItem(icon: Icon(Icons.bar_chart_outlined), label: 'Thống kê'),
-          BottomNavigationBarItem(icon: Icon(Icons.settings_outlined), label: 'Cài đặt'),
+        items: [
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.home_outlined),
+            label: isVietnamese ? 'Trang chủ' : 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.explore_outlined),
+            label: isVietnamese ? 'Khám phá' : 'Explore',
+          ),
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.library_books_outlined),
+            label: isVietnamese ? 'Thư viện' : 'Library',
+          ),
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.bar_chart_outlined),
+            label: isVietnamese ? 'Thống kê' : 'Stats',
+          ),
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.settings_outlined),
+            label: isVietnamese ? 'Cài đặt' : 'Settings',
+          ),
         ],
       ),
     );
