@@ -17,7 +17,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final isDarkMode = appState.isDarkMode;
     final notificationsEnabled = appState.notificationsEnabled;
 
-    final title = isVietnamese ? "Hồ Sơ" : "Profile";
+    final title = isVietnamese ? "Cài đặt" : "Setting";
     final languageLabel = isVietnamese ? "Ngôn ngữ" : "Language";
     final darkModeLabel = isVietnamese ? "Chế độ tối" : "Dark mode";
     final notiLabel = isVietnamese ? "Thông báo" : "Notifications";
@@ -70,7 +70,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
-                      isVietnamese ? "MSSV: 23010173" : "ID: 23010173",
+                      isVietnamese ? "MSSV:" : "ID:",
                       style: const TextStyle(color: Colors.white),
                     ),
                   ),
@@ -321,8 +321,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
         title: Text(isVietnamese ? "Về ứng dụng" : "About"),
         content: Text(
           isVietnamese
-              ? "BookReader - Ứng dụng đọc sách điện tử.\nPhiên bản: 1.0.0"
-              : "BookReader - E-book reading application.\nVersion: 1.0.0",
+              ? "Bookify.\nPhiên bản: 1.0.0"
+              : "Bookify.\nVersion: 1.0.0",
         ),
         actions: [
           TextButton(

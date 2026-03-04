@@ -432,4 +432,4 @@ class _CatItem {
   final IconData icon;
   final Color bg;
   const _CatItem(this.title, this.icon, this.bg);
-}
+} 
