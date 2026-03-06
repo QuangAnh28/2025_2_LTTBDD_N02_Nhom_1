@@ -3,9 +3,11 @@ import 'package:flutter/services.dart';
 import '../models/book.dart';
 import '../data/books.dart';
 import '../main.dart';
+import 'readerscreen.dart';
 
 class BookDetailScreen extends StatefulWidget {
   final Book book;
+
   const BookDetailScreen({super.key, required this.book});
 
   @override
@@ -55,7 +57,10 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
             Text(
               b.title,
               textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w900),
+              style: const TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.w900,
+              ),
             ),
             const SizedBox(height: 6),
             Text(
@@ -102,7 +107,21 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
         ),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(14),
-          child: Image.asset(b.coverUrl, fit: BoxFit.cover),
+          child: Image.asset(
+            b.coverUrl,
+            fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) {
+              return Container(
+                color: Colors.grey.shade300,
+                alignment: Alignment.center,
+                child: const Icon(
+                  Icons.image_not_supported_outlined,
+                  size: 48,
+                  color: Colors.grey,
+                ),
+              );
+            },
+          ),
         ),
       ),
     );
@@ -231,7 +250,10 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
         children: [
           Text(
             title,
-            style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 16),
+            style: const TextStyle(
+              fontWeight: FontWeight.w900,
+              fontSize: 16,
+            ),
           ),
           const SizedBox(height: 10),
           Text(
@@ -264,11 +286,10 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
   }
 
   void _startReading(BuildContext context, Book b, bool vi) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          vi ? 'Bắt đầu đọc: ${b.title}' : 'Start reading: ${b.title}',
-        ),
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => ReaderScreen(book: b),
       ),
     );
   }

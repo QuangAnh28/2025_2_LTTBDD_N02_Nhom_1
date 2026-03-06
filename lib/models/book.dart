@@ -5,6 +5,7 @@ class Book {
   final String coverUrl;
   final String category;
   final String description;
+  final String pdfPath;
 
   final int totalChapters;
   int currentChapter;
@@ -12,9 +13,8 @@ class Book {
   bool isFavorite;
   bool isBookmarked;
 
-  // 🔥 Thêm cho thống kê
-  int minutesRead; // tổng phút đã đọc
-  bool isCompleted; // đã đọc xong chưa
+  int minutesRead;
+  bool isCompleted;
 
   Book({
     required this.id,
@@ -23,6 +23,7 @@ class Book {
     required this.coverUrl,
     required this.category,
     required this.description,
+    required this.pdfPath,
     required this.totalChapters,
     required this.currentChapter,
     this.isFavorite = false,
@@ -31,7 +32,6 @@ class Book {
     this.isCompleted = false,
   });
 
-  // % tiến trình
   double get progress {
     if (totalChapters <= 0) return 0;
     final p = currentChapter / totalChapters;
@@ -40,11 +40,8 @@ class Book {
     return p;
   }
 
-  // 🔥 tự động kiểm tra hoàn thành
   void checkCompleted() {
-    if (currentChapter >= totalChapters) {
-      isCompleted = true;
-    }
+    isCompleted = currentChapter >= totalChapters;
   }
 
   Book copyWith({
@@ -54,6 +51,7 @@ class Book {
     String? coverUrl,
     String? category,
     String? description,
+    String? pdfPath,
     int? totalChapters,
     int? currentChapter,
     bool? isFavorite,
@@ -68,6 +66,7 @@ class Book {
       coverUrl: coverUrl ?? this.coverUrl,
       category: category ?? this.category,
       description: description ?? this.description,
+      pdfPath: pdfPath ?? this.pdfPath,
       totalChapters: totalChapters ?? this.totalChapters,
       currentChapter: currentChapter ?? this.currentChapter,
       isFavorite: isFavorite ?? this.isFavorite,

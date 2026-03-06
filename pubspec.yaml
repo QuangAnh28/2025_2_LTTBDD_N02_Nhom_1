@@ -1,5 +1,5 @@
 name: lttbdd
-description: "E-book Reading - Ứng dụng đọc sách điện tử"
+description: "Bookify - Ứng dụng đọc sách điện tử"
 publish_to: "none"
 
 version: 1.0.0+1
@@ -17,6 +17,7 @@ dependencies:
   fl_chart: ^0.66.0
   shared_preferences: ^2.2.2
   intl: ^0.20.2
+  syncfusion_flutter_pdfviewer: ^32.2.8
 
 dev_dependencies:
   flutter_test:
@@ -28,3 +29,4 @@ flutter:
 
   assets:
     - assets/images/
+    - assets/pdf/
