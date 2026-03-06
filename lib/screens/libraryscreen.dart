@@ -3,6 +3,7 @@ import '../main.dart';
 import '../data/books.dart';
 import '../models/book.dart';
 import 'bookdetailscreen.dart';
+import 'readerscreen.dart';
 
 class LibraryScreen extends StatefulWidget {
   const LibraryScreen({super.key});
@@ -16,6 +17,13 @@ class _LibraryScreenState extends State<LibraryScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (_) => BookDetailScreen(book: book)),
+    ).then((_) => setState(() {}));
+  }
+
+  void _openReader(Book book) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => ReaderScreen(book: book)),
     ).then((_) => setState(() {}));
   }
 
@@ -86,7 +94,6 @@ class _LibraryScreenState extends State<LibraryScreen> {
     );
   }
 
-  // ================= FAVORITES =================
   Widget _buildFavoriteBooks(bool vi) {
     final favoriteBooks = fakeBooks.where((book) => book.isFavorite).toList();
 
@@ -165,9 +172,9 @@ class _LibraryScreenState extends State<LibraryScreen> {
     );
   }
 
-  // ================= BOOKMARKS =================
   Widget _buildBookmarkBooks(bool vi) {
-    final bookmarkedBooks = fakeBooks.where((book) => book.isBookmarked).toList();
+    final bookmarkedBooks =
+        fakeBooks.where((book) => book.isBookmarked).toList();
 
     if (bookmarkedBooks.isEmpty) {
       return Center(
@@ -184,14 +191,15 @@ class _LibraryScreenState extends State<LibraryScreen> {
       separatorBuilder: (_, __) => const SizedBox(height: 10),
       itemBuilder: (context, index) {
         final book = bookmarkedBooks[index];
-        final percent = (book.progress * 100).clamp(0, 100).toStringAsFixed(0);
+        final currentPage = book.currentPage <= 0 ? 1 : book.currentPage;
+        final totalPages = book.totalPages <= 0 ? currentPage : book.totalPages;
 
         return Material(
           color: Colors.white,
           borderRadius: BorderRadius.circular(14),
           child: InkWell(
             borderRadius: BorderRadius.circular(14),
-            onTap: () => _openDetail(book),
+            onTap: () => _openReader(book),
             child: Padding(
               padding: const EdgeInsets.all(10),
               child: Row(
@@ -221,19 +229,12 @@ class _LibraryScreenState extends State<LibraryScreen> {
                           ),
                         ),
                         const SizedBox(height: 8),
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(999),
-                          child: LinearProgressIndicator(
-                            value: book.progress,
-                            minHeight: 7,
-                            backgroundColor: const Color(0xFFE5E7EB),
-                          ),
-                        ),
-                        const SizedBox(height: 6),
                         Text(
-                          vi ? "$percent% đã đọc" : "$percent% read",
+                          vi
+                              ? 'Đã đánh dấu ở trang $currentPage/$totalPages'
+                              : 'Bookmarked at page $currentPage/$totalPages',
                           style: const TextStyle(
-                            fontSize: 12,
+                            fontSize: 13,
                             color: Colors.black54,
                             fontWeight: FontWeight.w700,
                           ),

@@ -16,18 +16,14 @@ class _ReaderScreenState extends State<ReaderScreen> {
 
   int _currentPage = 1;
   int _totalPages = 0;
-
   double _zoomLevel = 1.0;
   int? _bookmarkedPage;
 
   @override
   void initState() {
     super.initState();
-
-    if (widget.book.currentChapter > 0) {
-      _bookmarkedPage = widget.book.currentChapter;
-      _currentPage = widget.book.currentChapter;
-    }
+    _currentPage = widget.book.currentPage > 0 ? widget.book.currentPage : 1;
+    _bookmarkedPage = widget.book.isBookmarked ? widget.book.currentPage : null;
   }
 
   @override
@@ -67,30 +63,23 @@ class _ReaderScreenState extends State<ReaderScreen> {
   void _bookmarkCurrentPage() {
     setState(() {
       _bookmarkedPage = _currentPage;
-      widget.book.currentChapter = _currentPage;
+      widget.book.currentPage = _currentPage;
       widget.book.isBookmarked = true;
     });
 
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Đã đánh dấu trang $_currentPage'),
-      ),
+      SnackBar(content: Text('Đã đánh dấu trang $_currentPage')),
     );
   }
 
   void _goToBookmark() {
-    if (_bookmarkedPage != null && _bookmarkedPage! <= _totalPages) {
+    if (_bookmarkedPage != null &&
+        _bookmarkedPage! > 0 &&
+        _bookmarkedPage! <= _totalPages) {
       _pdfViewerController.jumpToPage(_bookmarkedPage!);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Đã chuyển tới trang $_bookmarkedPage'),
-        ),
-      );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Chưa có trang được đánh dấu'),
-        ),
+        const SnackBar(content: Text('Chưa có trang được đánh dấu')),
       );
     }
   }
@@ -187,27 +176,28 @@ class _ReaderScreenState extends State<ReaderScreen> {
               onDocumentLoaded: (details) {
                 setState(() {
                   _totalPages = details.document.pages.count;
+                  widget.book.totalPages = _totalPages;
+
+                  if (widget.book.currentPage <= 0) {
+                    widget.book.currentPage = 1;
+                  }
+
+                  if (widget.book.currentPage > _totalPages) {
+                    widget.book.currentPage = _totalPages;
+                  }
                 });
 
-                if (_bookmarkedPage != null &&
-                    _bookmarkedPage! > 0 &&
-                    _bookmarkedPage! <= _totalPages) {
-                  WidgetsBinding.instance.addPostFrameCallback((_) {
-                    _pdfViewerController.jumpToPage(_bookmarkedPage!);
-                  });
-                }
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  final pageToOpen =
+                      widget.book.currentPage > 0 ? widget.book.currentPage : 1;
+                  _pdfViewerController.jumpToPage(pageToOpen);
+                });
               },
               onPageChanged: (details) {
                 setState(() {
                   _currentPage = details.newPageNumber;
-                  widget.book.currentChapter = _currentPage;
-                  widget.book.isBookmarked = true;
-
-                  if (_totalPages > 0 && _currentPage >= _totalPages) {
-                    widget.book.isCompleted = true;
-                  } else {
-                    widget.book.isCompleted = false;
-                  }
+                  widget.book.currentPage = _currentPage;
+                  widget.book.checkCompleted();
                 });
               },
             ),

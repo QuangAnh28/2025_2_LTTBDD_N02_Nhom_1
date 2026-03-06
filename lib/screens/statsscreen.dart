@@ -13,7 +13,7 @@ class StatsScreen extends StatelessWidget {
     final totalBooks = fakeBooks.length;
 
     final totalChaptersRead =
-        fakeBooks.fold<int>(0, (sum, book) => sum + book.currentChapter);
+        fakeBooks.fold<int>(0, (sum, book) => sum + book.currentPage);
 
     final completedBooks = fakeBooks.where((book) => book.isCompleted).length;
 
@@ -103,7 +103,9 @@ class StatsScreen extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               Text(
-                vi ? "$totalChaptersRead chương" : "$totalChaptersRead chapters",
+                vi
+                    ? "$totalChaptersRead chương"
+                    : "$totalChaptersRead chapters",
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 30,
@@ -126,7 +128,7 @@ class StatsScreen extends StatelessWidget {
 
     final maxChapter = fakeBooks
         .take(takeN)
-        .map((b) => b.currentChapter)
+        .map((b) => b.currentPage)
         .fold<int>(0, (m, v) => v > m ? v : m);
 
     final maxY = (maxChapter + 5).toDouble().clamp(5.0, 9999.0);
@@ -143,7 +145,9 @@ class StatsScreen extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            vi ? "📊 Chương đã đọc (Top $takeN)" : "📊 Chapters read (Top $takeN)",
+            vi
+                ? "📊 Chương đã đọc (Top $takeN)"
+                : "📊 Chapters read (Top $takeN)",
             style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 16),
           ),
           const SizedBox(height: 12),
@@ -156,10 +160,10 @@ class StatsScreen extends StatelessWidget {
                 borderData: FlBorderData(show: false),
                 barTouchData: BarTouchData(enabled: true),
                 titlesData: FlTitlesData(
-                  topTitles:
-                      const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                  rightTitles:
-                      const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                  topTitles: const AxisTitles(
+                      sideTitles: SideTitles(showTitles: false)),
+                  rightTitles: const AxisTitles(
+                      sideTitles: SideTitles(showTitles: false)),
                   leftTitles: AxisTitles(
                     sideTitles: SideTitles(
                       showTitles: true,
@@ -192,7 +196,7 @@ class StatsScreen extends StatelessWidget {
                   takeN,
                   (index) => _makeGroup(
                     index,
-                    fakeBooks[index].currentChapter.toDouble(),
+                    fakeBooks[index].currentPage.toDouble(),
                   ),
                 ),
               ),

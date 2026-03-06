@@ -7,8 +7,8 @@ class Book {
   final String description;
   final String pdfPath;
 
-  final int totalChapters;
-  int currentChapter;
+  int totalPages;
+  int currentPage;
 
   bool isFavorite;
   bool isBookmarked;
@@ -24,8 +24,8 @@ class Book {
     required this.category,
     required this.description,
     required this.pdfPath,
-    required this.totalChapters,
-    required this.currentChapter,
+    this.totalPages = 0,
+    this.currentPage = 1,
     this.isFavorite = false,
     this.isBookmarked = false,
     this.minutesRead = 0,
@@ -33,15 +33,15 @@ class Book {
   });
 
   double get progress {
-    if (totalChapters <= 0) return 0;
-    final p = currentChapter / totalChapters;
+    if (totalPages <= 0) return 0;
+    final p = currentPage / totalPages;
     if (p < 0) return 0;
     if (p > 1) return 1;
     return p;
   }
 
   void checkCompleted() {
-    isCompleted = currentChapter >= totalChapters;
+    isCompleted = totalPages > 0 && currentPage >= totalPages;
   }
 
   Book copyWith({
@@ -52,8 +52,8 @@ class Book {
     String? category,
     String? description,
     String? pdfPath,
-    int? totalChapters,
-    int? currentChapter,
+    int? totalPages,
+    int? currentPage,
     bool? isFavorite,
     bool? isBookmarked,
     int? minutesRead,
@@ -67,8 +67,8 @@ class Book {
       category: category ?? this.category,
       description: description ?? this.description,
       pdfPath: pdfPath ?? this.pdfPath,
-      totalChapters: totalChapters ?? this.totalChapters,
-      currentChapter: currentChapter ?? this.currentChapter,
+      totalPages: totalPages ?? this.totalPages,
+      currentPage: currentPage ?? this.currentPage,
       isFavorite: isFavorite ?? this.isFavorite,
       isBookmarked: isBookmarked ?? this.isBookmarked,
       minutesRead: minutesRead ?? this.minutesRead,

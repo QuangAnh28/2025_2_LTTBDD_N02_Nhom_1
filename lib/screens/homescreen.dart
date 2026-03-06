@@ -62,13 +62,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   children: [
                     _header(vi),
                     const SizedBox(height: 12),
-
                     _searchBox(vi),
                     const SizedBox(height: 12),
-
                     _featuredSlider(featuredBooks, vi),
                     const SizedBox(height: 14),
-
                     _sectionTitle(
                       title: vi ? 'Sách Đề Xuất' : 'Recommended',
                       trailing: GestureDetector(
@@ -84,9 +81,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     const SizedBox(height: 10),
                     _bookRow(recommended),
-
                     const SizedBox(height: 14),
-
                     _sectionTitle(
                       title: vi ? 'Sách Phổ Biến' : 'Popular',
                       trailing: GestureDetector(
@@ -102,9 +97,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     const SizedBox(height: 10),
                     _bookRow(popularBooks),
-
                     const SizedBox(height: 14),
-
                     _sectionTitle(
                       title: vi ? 'Thể Loại Phổ Biến' : 'Popular Categories',
                       trailing: GestureDetector(
@@ -117,7 +110,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     const SizedBox(height: 10),
                     _popularCategories(vi),
-
                     const SizedBox(height: 8),
                   ],
                 ),
@@ -183,7 +175,8 @@ class _HomeScreenState extends State<HomeScreen> {
         const SizedBox(height: 8),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: List.generate(books.length, (i) => _dot(i == _featuredIndex)),
+          children:
+              List.generate(books.length, (i) => _dot(i == _featuredIndex)),
         ),
       ],
     );
@@ -254,8 +247,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     const Spacer(),
                     Text(
                       vi
-                          ? 'Đọc tới Chương ${book.currentChapter}'
-                          : 'Continue at Chapter ${book.currentChapter}',
+                          ? 'Đọc tới Chương ${book.currentPage}'
+                          : 'Continue at Chapter ${book.currentPage}',
                       style: const TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.w800,
@@ -377,7 +370,8 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _popularCategories(bool vi) {
     final items = vi
         ? const [
-            _CatItem('Tiểu\nThuyết', Icons.menu_book_rounded, Color(0xFFFFE6D5)),
+            _CatItem(
+                'Tiểu\nThuyết', Icons.menu_book_rounded, Color(0xFFFFE6D5)),
             _CatItem('Khoa Học', Icons.science_rounded, Color(0xFFE6EDFF)),
             _CatItem('Kinh Dị', Icons.visibility_rounded, Color(0xFFE7F7FF)),
             _CatItem('Phiêu\nLưu', Icons.explore_rounded, Color(0xFFF1E7FF)),
@@ -432,4 +426,4 @@ class _CatItem {
   final IconData icon;
   final Color bg;
   const _CatItem(this.title, this.icon, this.bg);
-} 
+}
