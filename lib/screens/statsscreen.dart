@@ -6,13 +6,23 @@ import '../data/books.dart';
 class StatsScreen extends StatelessWidget {
   const StatsScreen({super.key});
 
+  static const Color bgColor = Color(0xFFF6EEE8);
+  static const Color primaryBrown = Color(0xFF9C6B4F);
+  static const Color darkBrown = Color(0xFF5E4032);
+  static const Color softBrown = Color(0xFFD8C2B3);
+  static const Color cardColor = Color(0xFFFFFAF6);
+  static const Color borderColor = Color(0xFFE8D9CF);
+  static const Color textSoft = Color(0xFF8A6F60);
+  static const Color chipBg = Color(0xFFF1E4DB);
+  static const Color accentColor = Color(0xFFE0A85A);
+
   @override
   Widget build(BuildContext context) {
     final vi = MyApp.of(context).isVietnamese;
 
     final totalBooks = fakeBooks.length;
 
-    final totalChaptersRead =
+    final totalPagesRead =
         fakeBooks.fold<int>(0, (sum, book) => sum + book.currentPage);
 
     final completedBooks = fakeBooks.where((book) => book.isCompleted).length;
@@ -29,146 +39,205 @@ class StatsScreen extends StatelessWidget {
 
     final progressPercent = (avgProgress * 100).clamp(0.0, 100.0);
 
-    return SafeArea(
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            _buildTotalChaptersCard(totalChaptersRead, vi),
-            const SizedBox(height: 20),
-            if (fakeBooks.isNotEmpty) _buildChartCard(vi),
-            const SizedBox(height: 20),
-            _buildTimeAndBooksCard(avgMinutesPerDay, completedBooks, vi),
-            const SizedBox(height: 20),
-            _buildGoalCard(completedBooks, vi),
-            const SizedBox(height: 20),
-            _buildInfoCard(
-              vi ? "📚 Tổng số sách" : "📚 Total books",
-              totalBooks.toString(),
-            ),
-            _buildInfoCard(
-              vi ? "⏳ Tổng phút đọc" : "⏳ Total minutes",
-              vi ? "$totalMinutes phút" : "$totalMinutes min",
-            ),
-            const SizedBox(height: 20),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                vi ? "📈 Tiến trình trung bình" : "📈 Average progress",
-                style:
-                    const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+    return Container(
+      color: bgColor,
+      child: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            children: [
+              _buildHeader(vi),
+              const SizedBox(height: 16),
+              _buildTotalPagesCard(totalPagesRead, vi),
+              const SizedBox(height: 16),
+              if (fakeBooks.isNotEmpty) _buildChartCard(vi),
+              const SizedBox(height: 16),
+              _buildTimeAndBooksCard(avgMinutesPerDay, completedBooks, vi),
+              const SizedBox(height: 16),
+              _buildGoalCard(completedBooks, vi),
+              const SizedBox(height: 16),
+              _buildInfoCard(
+                vi ? "📚 Tổng số sách" : "📚 Total books",
+                totalBooks.toString(),
               ),
-            ),
-            const SizedBox(height: 10),
-            LinearProgressIndicator(
-              value: avgProgress.clamp(0.0, 1.0),
-              minHeight: 10,
-              borderRadius: BorderRadius.circular(10),
-            ),
-            const SizedBox(height: 6),
-            Text(
-              "${progressPercent.toStringAsFixed(1)}%",
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ),
-          ],
+              _buildInfoCard(
+                vi ? "⏳ Tổng thời gian đọc" : "⏳ Total reading time",
+                vi ? "$totalMinutes phút" : "$totalMinutes min",
+              ),
+              _buildInfoCard(
+                vi ? "📖 Tổng số trang đã đọc" : "📖 Total pages read",
+                vi ? "$totalPagesRead trang" : "$totalPagesRead pages",
+              ),
+              const SizedBox(height: 16),
+              _buildAverageProgressCard(avgProgress, progressPercent, vi),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  // =======================
-  // CARD: TOTAL CHAPTERS
-  // =======================
-  Widget _buildTotalChaptersCard(int totalChaptersRead, bool vi) {
+  Widget _buildHeader(bool vi) {
+    return Row(
+      children: [
+        Container(
+          width: 42,
+          height: 42,
+          decoration: BoxDecoration(
+            color: chipBg,
+            borderRadius: BorderRadius.circular(14),
+          ),
+          child: const Icon(
+            Icons.bar_chart_rounded,
+            color: primaryBrown,
+            size: 22,
+          ),
+        ),
+        const SizedBox(width: 12),
+        Text(
+          vi ? "Thống kê" : "Statistics",
+          style: const TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.w900,
+            color: darkBrown,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTotalPagesCard(int totalPagesRead, bool vi) {
     return Container(
+      width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
-          colors: [Color(0xFFFF9800), Color(0xFFFFB74D)],
+          colors: [Color(0xFFB68468), Color(0xFFE0A85A)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
         ),
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: const [
-          BoxShadow(color: Colors.black26, blurRadius: 8, offset: Offset(0, 4)),
+        borderRadius: BorderRadius.circular(22),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.08),
+            blurRadius: 10,
+            offset: const Offset(0, 5),
+          ),
         ],
       ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                vi ? "Tổng số chương đã đọc" : "Total chapters read",
-                style: const TextStyle(color: Colors.white),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                vi
-                    ? "$totalChaptersRead chương"
-                    : "$totalChaptersRead chapters",
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 30,
-                  fontWeight: FontWeight.bold,
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  vi ? "Tổng số trang đã đọc" : "Total pages read",
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
-              ),
-            ],
+                const SizedBox(height: 10),
+                Text(
+                  vi ? "$totalPagesRead trang" : "$totalPagesRead pages",
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 30,
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+              ],
+            ),
           ),
-          const Icon(Icons.menu_book, size: 60, color: Colors.white),
+          const Icon(
+            Icons.menu_book_rounded,
+            size: 58,
+            color: Colors.white,
+          ),
         ],
       ),
     );
   }
 
-  // =======================
-  // BAR CHART
-  // =======================
   Widget _buildChartCard(bool vi) {
     final takeN = fakeBooks.length > 4 ? 4 : fakeBooks.length;
 
-    final maxChapter = fakeBooks
+    final maxPage = fakeBooks
         .take(takeN)
         .map((b) => b.currentPage)
         .fold<int>(0, (m, v) => v > m ? v : m);
 
-    final maxY = (maxChapter + 5).toDouble().clamp(5.0, 9999.0);
+    final maxY = (maxPage + 5).toDouble().clamp(5.0, 9999.0);
 
     return Container(
-      height: 270,
+      height: 280,
+      width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 8)],
+        color: cardColor,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: borderColor),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 3),
+          )
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            vi
-                ? "📊 Chương đã đọc (Top $takeN)"
-                : "📊 Chapters read (Top $takeN)",
-            style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 16),
+            vi ? "📊 Trang đã đọc (Top $takeN)" : "📊 Pages read (Top $takeN)",
+            style: const TextStyle(
+              fontWeight: FontWeight.w900,
+              fontSize: 16,
+              color: darkBrown,
+            ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 14),
           Expanded(
             child: BarChart(
               BarChartData(
                 alignment: BarChartAlignment.spaceAround,
                 maxY: maxY,
-                gridData: FlGridData(show: true),
+                gridData: FlGridData(
+                  show: true,
+                  horizontalInterval: (maxY / 4).clamp(1, 9999),
+                  getDrawingHorizontalLine: (value) {
+                    return const FlLine(
+                      color: borderColor,
+                      strokeWidth: 1,
+                    );
+                  },
+                  drawVerticalLine: false,
+                ),
                 borderData: FlBorderData(show: false),
                 barTouchData: BarTouchData(enabled: true),
                 titlesData: FlTitlesData(
                   topTitles: const AxisTitles(
-                      sideTitles: SideTitles(showTitles: false)),
+                    sideTitles: SideTitles(showTitles: false),
+                  ),
                   rightTitles: const AxisTitles(
-                      sideTitles: SideTitles(showTitles: false)),
+                    sideTitles: SideTitles(showTitles: false),
+                  ),
                   leftTitles: AxisTitles(
                     sideTitles: SideTitles(
                       showTitles: true,
-                      reservedSize: 30,
-                      interval: (maxY / 4).clamp(1, 10),
+                      reservedSize: 34,
+                      interval: (maxY / 4).clamp(1, 9999),
+                      getTitlesWidget: (value, meta) {
+                        return Text(
+                          value.toInt().toString(),
+                          style: const TextStyle(
+                            fontSize: 11,
+                            color: textSoft,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        );
+                      },
                     ),
                   ),
                   bottomTitles: AxisTitles(
@@ -177,7 +246,9 @@ class StatsScreen extends StatelessWidget {
                       reservedSize: 28,
                       getTitlesWidget: (value, meta) {
                         final i = value.toInt();
-                        if (i < 0 || i >= takeN) return const SizedBox.shrink();
+                        if (i < 0 || i >= takeN) {
+                          return const SizedBox.shrink();
+                        }
                         return Padding(
                           padding: const EdgeInsets.only(top: 6),
                           child: Text(
@@ -185,6 +256,7 @@ class StatsScreen extends StatelessWidget {
                             style: const TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.w800,
+                              color: darkBrown,
                             ),
                           ),
                         );
@@ -214,110 +286,224 @@ class StatsScreen extends StatelessWidget {
         BarChartRodData(
           toY: y,
           width: 18,
-          borderRadius: BorderRadius.circular(4),
-          color: Colors.orange,
+          borderRadius: BorderRadius.circular(6),
+          color: accentColor,
+          backDrawRodData: BackgroundBarChartRodData(
+            show: true,
+            toY: y < 5 ? 5 : y,
+            color: chipBg,
+          ),
         ),
       ],
     );
   }
 
-  // =======================
-  // TIME & COMPLETED
-  // =======================
   Widget _buildTimeAndBooksCard(int avgMinutes, int completedBooks, bool vi) {
     return Row(
       children: [
         Expanded(
           child: _buildSmallCard(
-            vi ? "Thời Gian Đọc" : "Reading time",
+            vi ? "Thời gian đọc" : "Reading time",
             vi ? "$avgMinutes phút/ngày" : "$avgMinutes min/day",
+            Icons.schedule_rounded,
           ),
         ),
         const SizedBox(width: 12),
         Expanded(
           child: _buildSmallCard(
-            vi ? "Sách Đã Đọc" : "Completed books",
+            vi ? "Sách đã đọc xong" : "Completed books",
             vi ? "$completedBooks cuốn" : "$completedBooks books",
+            Icons.check_circle_outline_rounded,
           ),
         ),
       ],
     );
   }
 
-  Widget _buildSmallCard(String title, String value) {
+  Widget _buildSmallCard(String title, String value, IconData icon) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 6)],
+        color: cardColor,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: borderColor),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 3),
+          )
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title, style: const TextStyle(fontWeight: FontWeight.w700)),
+          Container(
+            width: 38,
+            height: 38,
+            decoration: BoxDecoration(
+              color: chipBg,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(icon, color: primaryBrown, size: 20),
+          ),
+          const SizedBox(height: 12),
+          Text(
+            title,
+            style: const TextStyle(
+              fontWeight: FontWeight.w700,
+              color: textSoft,
+            ),
+          ),
           const SizedBox(height: 8),
           Text(
             value,
-            style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+            style: const TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.w900,
+              color: darkBrown,
+            ),
           ),
         ],
       ),
     );
   }
 
-  // =======================
-  // GOAL
-  // =======================
   Widget _buildGoalCard(int completedBooks, bool vi) {
     const int goal = 20;
     final double percent = (completedBooks / goal).clamp(0.0, 1.0);
 
     return Container(
+      width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 6)],
+        color: cardColor,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: borderColor),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 3),
+          )
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             vi ? "🎯 Mục tiêu năm" : "🎯 Year goal",
-            style: const TextStyle(fontWeight: FontWeight.w900),
+            style: const TextStyle(
+              fontWeight: FontWeight.w900,
+              color: darkBrown,
+            ),
           ),
-          const SizedBox(height: 8),
-          LinearProgressIndicator(
-            value: percent,
-            minHeight: 10,
-            borderRadius: BorderRadius.circular(10),
+          const SizedBox(height: 10),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(999),
+            child: LinearProgressIndicator(
+              value: percent,
+              minHeight: 10,
+              backgroundColor: chipBg,
+              valueColor: const AlwaysStoppedAnimation(accentColor),
+            ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 10),
           Text(
             vi
-                ? "${(percent * 100).toInt()}% hoàn thành"
-                : "${(percent * 100).toInt()}% completed",
-            style: const TextStyle(fontWeight: FontWeight.w700),
+                ? "${(percent * 100).toInt()}% hoàn thành ($completedBooks/$goal cuốn)"
+                : "${(percent * 100).toInt()}% completed ($completedBooks/$goal books)",
+            style: const TextStyle(
+              fontWeight: FontWeight.w700,
+              color: textSoft,
+            ),
           ),
         ],
       ),
     );
   }
 
-  // =======================
-  // INFO CARD
-  // =======================
   Widget _buildInfoCard(String title, String value) {
-    return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+    return Container(
       margin: const EdgeInsets.only(bottom: 12),
+      decoration: BoxDecoration(
+        color: cardColor,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: borderColor),
+      ),
       child: ListTile(
-        title: Text(title),
+        title: Text(
+          title,
+          style: const TextStyle(
+            color: darkBrown,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
         trailing: Text(
           value,
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+          style: const TextStyle(
+            fontWeight: FontWeight.w900,
+            fontSize: 16,
+            color: primaryBrown,
+          ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildAverageProgressCard(
+    double avgProgress,
+    double progressPercent,
+    bool vi,
+  ) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: cardColor,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: borderColor),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 3),
+          )
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            vi ? "📈 Tiến trình trung bình" : "📈 Average progress",
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w900,
+              color: darkBrown,
+            ),
+          ),
+          const SizedBox(height: 12),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(999),
+            child: LinearProgressIndicator(
+              value: avgProgress.clamp(0.0, 1.0),
+              minHeight: 10,
+              backgroundColor: chipBg,
+              valueColor: const AlwaysStoppedAnimation(primaryBrown),
+            ),
+          ),
+          const SizedBox(height: 8),
+          Align(
+            alignment: Alignment.centerRight,
+            child: Text(
+              "${progressPercent.toStringAsFixed(1)}%",
+              style: const TextStyle(
+                fontWeight: FontWeight.w900,
+                color: primaryBrown,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

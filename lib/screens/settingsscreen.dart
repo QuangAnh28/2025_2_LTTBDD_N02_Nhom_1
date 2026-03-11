@@ -9,6 +9,17 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
+  static const Color bgColor = Color(0xFFF6EEE8);
+  static const Color primaryBrown = Color(0xFF9C6B4F);
+  static const Color darkBrown = Color(0xFF5E4032);
+  static const Color softBrown = Color(0xFFD8C2B3);
+  static const Color cardColor = Color(0xFFFFFAF6);
+  static const Color borderColor = Color(0xFFE8D9CF);
+  static const Color textSoft = Color(0xFF8A6F60);
+  static const Color chipBg = Color(0xFFF1E4DB);
+  static const Color dangerColor = Color(0xFFD87C7C);
+  static const Color accentColor = Color(0xFFE0A85A);
+
   @override
   Widget build(BuildContext context) {
     final appState = MyApp.of(context);
@@ -17,7 +28,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final isDarkMode = appState.isDarkMode;
     final notificationsEnabled = appState.notificationsEnabled;
 
-    final title = isVietnamese ? "Cài đặt" : "Setting";
+    final title = isVietnamese ? "Cài đặt" : "Settings";
     final languageLabel = isVietnamese ? "Ngôn ngữ" : "Language";
     final darkModeLabel = isVietnamese ? "Chế độ tối" : "Dark mode";
     final notiLabel = isVietnamese ? "Thông báo" : "Notifications";
@@ -27,10 +38,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final logoutLabel = isVietnamese ? "Đăng xuất" : "Logout";
 
     return Scaffold(
-      backgroundColor: const Color(0xfff2f2f2),
+      backgroundColor: bgColor,
       appBar: AppBar(
-        title: Text(title),
-        backgroundColor: const Color(0xff6A6AE3),
+        title: Text(
+          title,
+          style: const TextStyle(
+            color: darkBrown,
+            fontWeight: FontWeight.w900,
+          ),
+        ),
+        centerTitle: true,
+        backgroundColor: bgColor,
+        foregroundColor: darkBrown,
         elevation: 0,
       ),
       body: SafeArea(
@@ -38,73 +57,83 @@ class _SettingsScreenState extends State<SettingsScreen> {
           padding: EdgeInsets.zero,
           children: [
             Container(
-              padding: const EdgeInsets.fromLTRB(16, 14, 16, 18),
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [Color(0xff6A6AE3), Color(0xff8B8BEF)],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                borderRadius: BorderRadius.vertical(bottom: Radius.circular(26)),
+              margin: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+              padding: const EdgeInsets.fromLTRB(16, 18, 16, 18),
+              decoration: BoxDecoration(
+                color: primaryBrown,
+                borderRadius: BorderRadius.circular(24),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.08),
+                    blurRadius: 16,
+                    offset: const Offset(0, 8),
+                  ),
+                ],
               ),
               child: Column(
                 children: [
-                  const SizedBox(height: 8),
-                  const CircleAvatar(
-                    radius: 28,
-                    backgroundColor: Colors.white,
-                    child: Icon(
-                      Icons.person,
-                      size: 36,
-                      color: Color(0xff6A6AE3),
+                  const SizedBox(height: 4),
+                  Container(
+                    width: 72,
+                    height: 72,
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.18),
+                      shape: BoxShape.circle,
+                      border: Border.all(color: Colors.white24),
+                    ),
+                    child: const Icon(
+                      Icons.person_rounded,
+                      size: 38,
+                      color: Colors.white,
                     ),
                   ),
-                  const SizedBox(height: 10),
-
-                  // CHỈ HIỂN THỊ MSSV/ID (KHÔNG HIỂN THỊ TÊN)
+                  const SizedBox(height: 12),
                   Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 7,
+                    ),
                     decoration: BoxDecoration(
-                      color: Colors.white24,
+                      color: Colors.white.withOpacity(0.16),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
                       isVietnamese ? "MSSV:" : "ID:",
-                      style: const TextStyle(color: Colors.white),
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
                   ),
-
-                  const SizedBox(height: 14),
-
+                  const SizedBox(height: 16),
                   Container(
                     width: double.infinity,
-                    padding: const EdgeInsets.fromLTRB(12, 10, 12, 10),
+                    padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.12),
+                      color: Colors.white.withOpacity(0.10),
                       borderRadius: BorderRadius.circular(18),
                       border: Border.all(color: Colors.white24),
                     ),
                     child: Column(
                       children: [
                         _infoRow(
-                          icon: Icons.book,
+                          icon: Icons.book_rounded,
                           label: isVietnamese ? "Dự án" : "Project",
                           value: isVietnamese
                               ? "BookReader - Ứng dụng đọc sách"
                               : "BookReader - Reading app",
                         ),
-                        const SizedBox(height: 10),
+                        const SizedBox(height: 12),
                         _infoRow(
-                          icon: Icons.class_,
+                          icon: Icons.class_rounded,
                           label: isVietnamese ? "Lớp" : "Class",
                           value: isVietnamese
                               ? "Lập trình cho thiết bị di động 1-2-25(N02)"
                               : "Mobile Programming 1-2-25(N02)",
                         ),
-                        const SizedBox(height: 10),
+                        const SizedBox(height: 12),
                         _infoRow(
-                          icon: Icons.school,
+                          icon: Icons.school_rounded,
                           label: isVietnamese ? "Giảng viên" : "Lecturer",
                           value: isVietnamese
                               ? "Nguyễn Xuân Quế"
@@ -122,11 +151,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
             _cardSection(
               children: [
                 ListTile(
-                  leading: const Icon(Icons.language, color: Color(0xff1b74e4)),
-                  title: Text(languageLabel),
+                  leading: _leadingIcon(Icons.language_rounded),
+                  title: Text(
+                    languageLabel,
+                    style: const TextStyle(
+                      color: darkBrown,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
                   trailing: DropdownButtonHideUnderline(
                     child: DropdownButton<bool>(
                       value: isVietnamese,
+                      dropdownColor: cardColor,
+                      style: const TextStyle(
+                        color: darkBrown,
+                        fontWeight: FontWeight.w700,
+                      ),
                       items: const [
                         DropdownMenuItem(
                           value: true,
@@ -145,35 +185,58 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     ),
                   ),
                 ),
-                const Divider(height: 1),
+                const Divider(height: 1, color: borderColor),
                 SwitchListTile(
-                  secondary:
-                      const Icon(Icons.dark_mode, color: Color(0xff2d7dff)),
-                  title: Text(darkModeLabel),
+                  secondary: _leadingIcon(Icons.dark_mode_rounded),
+                  title: const Text(
+                    "Chế độ tối",
+                    style: TextStyle(
+                      color: darkBrown,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
                   value: isDarkMode,
+                  activeColor: primaryBrown,
                   onChanged: (v) {
                     appState.changeTheme(v);
                     setState(() {});
                   },
                 ),
-                const Divider(height: 1),
+                const Divider(height: 1, color: borderColor),
                 SwitchListTile(
-                  secondary: const Icon(Icons.notifications,
-                      color: Color(0xff2d7dff)),
-                  title: Text(notiLabel),
+                  secondary: _leadingIcon(Icons.notifications_rounded),
+                  title: Text(
+                    notiLabel,
+                    style: const TextStyle(
+                      color: darkBrown,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
                   value: notificationsEnabled,
+                  activeColor: primaryBrown,
                   onChanged: (v) {
                     appState.changeNotification(v);
                     setState(() {});
                   },
                 ),
-                const Divider(height: 1),
+                const Divider(height: 1, color: borderColor),
                 ListTile(
-                  leading: const Icon(Icons.info_outline,
-                      color: Color(0xff2d7dff)),
-                  title: Text(aboutLabel),
-                  subtitle: const Text("Version 1.0.0"),
-                  trailing: const Icon(Icons.chevron_right),
+                  leading: _leadingIcon(Icons.info_outline_rounded),
+                  title: Text(
+                    aboutLabel,
+                    style: const TextStyle(
+                      color: darkBrown,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  subtitle: const Text(
+                    "Version 1.0.0",
+                    style: TextStyle(color: textSoft),
+                  ),
+                  trailing: const Icon(
+                    Icons.chevron_right_rounded,
+                    color: textSoft,
+                  ),
                   onTap: () => _showAboutDialog(context, isVietnamese),
                 ),
               ],
@@ -184,37 +247,61 @@ class _SettingsScreenState extends State<SettingsScreen> {
             _cardSection(
               children: [
                 ListTile(
-                  leading: const Icon(Icons.mail_outline,
-                      color: Color(0xff2d7dff)),
-                  title: Text(contactLabel),
-                  trailing: const Icon(Icons.chevron_right),
+                  leading: _leadingIcon(Icons.mail_outline_rounded),
+                  title: Text(
+                    contactLabel,
+                    style: const TextStyle(
+                      color: darkBrown,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  trailing: const Icon(
+                    Icons.chevron_right_rounded,
+                    color: textSoft,
+                  ),
                   onTap: () => _showContactDialog(context, isVietnamese),
                 ),
-                const Divider(height: 1),
+                const Divider(height: 1, color: borderColor),
                 ListTile(
-                  leading:
-                      const Icon(Icons.star_outline, color: Color(0xfff5a623)),
-                  title: Text(rateLabel),
-                  trailing: const Icon(Icons.chevron_right),
+                  leading: _leadingIcon(
+                    Icons.star_outline_rounded,
+                    iconColor: accentColor,
+                  ),
+                  title: Text(
+                    rateLabel,
+                    style: const TextStyle(
+                      color: darkBrown,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  trailing: const Icon(
+                    Icons.chevron_right_rounded,
+                    color: textSoft,
+                  ),
                   onTap: () {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: Text(isVietnamese
-                            ? "Chức năng minh hoạ: mở đánh giá ứng dụng"
-                            : "Demo: open app rating"),
+                        backgroundColor: primaryBrown,
+                        content: Text(
+                          isVietnamese
+                              ? "Chức năng minh hoạ: mở đánh giá ứng dụng"
+                              : "Demo: open app rating",
+                          style: const TextStyle(color: Colors.white),
+                        ),
                       ),
                     );
                   },
                 ),
-                const Divider(height: 1),
-
-                // ✅ LOGOUT
+                const Divider(height: 1, color: borderColor),
                 ListTile(
-                  leading: const Icon(Icons.logout, color: Colors.red),
+                  leading: _leadingIcon(
+                    Icons.logout_rounded,
+                    iconColor: dangerColor,
+                  ),
                   title: Text(
                     logoutLabel,
                     style: const TextStyle(
-                      color: Colors.red,
+                      color: dangerColor,
                       fontWeight: FontWeight.w800,
                     ),
                   ),
@@ -222,18 +309,40 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     final ok = await showDialog<bool>(
                       context: context,
                       builder: (_) => AlertDialog(
-                        title: Text(logoutLabel),
-                        content: Text(isVietnamese
-                            ? "Bạn có chắc muốn đăng xuất không?"
-                            : "Are you sure you want to logout?"),
+                        backgroundColor: cardColor,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        title: Text(
+                          logoutLabel,
+                          style: const TextStyle(
+                            color: darkBrown,
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
+                        content: Text(
+                          isVietnamese
+                              ? "Bạn có chắc muốn đăng xuất không?"
+                              : "Are you sure you want to logout?",
+                          style: const TextStyle(color: textSoft),
+                        ),
                         actions: [
                           TextButton(
                             onPressed: () => Navigator.pop(context, false),
-                            child: Text(isVietnamese ? "Hủy" : "Cancel"),
+                            child: Text(
+                              isVietnamese ? "Hủy" : "Cancel",
+                              style: const TextStyle(color: textSoft),
+                            ),
                           ),
                           TextButton(
                             onPressed: () => Navigator.pop(context, true),
-                            child: Text(logoutLabel),
+                            child: const Text(
+                              "Logout",
+                              style: TextStyle(
+                                color: dangerColor,
+                                fontWeight: FontWeight.w800,
+                              ),
+                            ),
                           ),
                         ],
                       ),
@@ -241,7 +350,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
                     if (ok != true) return;
 
-                    // Tạm thời: quay về màn trước
                     if (context.mounted) Navigator.pop(context);
                   },
                 ),
@@ -255,22 +363,38 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
+  static Widget _leadingIcon(
+    IconData icon, {
+    Color iconColor = primaryBrown,
+  }) {
+    return Container(
+      width: 38,
+      height: 38,
+      decoration: BoxDecoration(
+        color: chipBg,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Icon(icon, color: iconColor, size: 20),
+    );
+  }
+
   static Widget _cardSection({required List<Widget> children}) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: const [
+        color: cardColor,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: borderColor),
+        boxShadow: [
           BoxShadow(
-            blurRadius: 18,
-            offset: Offset(0, 8),
-            color: Color(0x14000000),
+            blurRadius: 14,
+            offset: const Offset(0, 6),
+            color: Colors.black.withOpacity(0.04),
           )
         ],
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(18),
         child: Column(children: children),
       ),
     );
@@ -318,16 +442,36 @@ class _SettingsScreenState extends State<SettingsScreen> {
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        title: Text(isVietnamese ? "Về ứng dụng" : "About"),
+        backgroundColor: cardColor,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+        title: Text(
+          isVietnamese ? "Về ứng dụng" : "About",
+          style: const TextStyle(
+            color: darkBrown,
+            fontWeight: FontWeight.w800,
+          ),
+        ),
         content: Text(
           isVietnamese
               ? "Bookify.\nPhiên bản: 1.0.0"
               : "Bookify.\nVersion: 1.0.0",
+          style: const TextStyle(
+            color: textSoft,
+            height: 1.5,
+          ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text(isVietnamese ? "Đóng" : "Close"),
+            child: Text(
+              isVietnamese ? "Đóng" : "Close",
+              style: const TextStyle(
+                color: primaryBrown,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
           )
         ],
       ),
@@ -338,7 +482,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        title: Text(isVietnamese ? "Thông tin liên hệ" : "Contact"),
+        backgroundColor: cardColor,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+        title: Text(
+          isVietnamese ? "Thông tin liên hệ" : "Contact",
+          style: const TextStyle(
+            color: darkBrown,
+            fontWeight: FontWeight.w800,
+          ),
+        ),
         content: SingleChildScrollView(
           child: Text(
             isVietnamese
@@ -378,12 +532,22 @@ Emails:
 23010176@st.phenikaa-uni.edu.vn
 23010173@st.phenikaa-uni.edu.vn
 """,
+            style: const TextStyle(
+              color: textSoft,
+              height: 1.5,
+            ),
           ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text(isVietnamese ? "Đóng" : "Close"),
+            child: Text(
+              isVietnamese ? "Đóng" : "Close",
+              style: const TextStyle(
+                color: primaryBrown,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
           )
         ],
       ),
