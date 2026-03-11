@@ -18,6 +18,14 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
   bool _expanded = false;
   int _rating = 0;
 
+  static const Color bgColor = Color(0xFFF6EEE8);
+  static const Color primaryBrown = Color(0xFF9C6B4F);
+  static const Color darkBrown = Color(0xFF5E4032);
+  static const Color softBrown = Color(0xFFD8C2B3);
+  static const Color cardColor = Color(0xFFFFFAF6);
+  static const Color borderColor = Color(0xFFE8D9CF);
+  static const Color textSoft = Color(0xFF8A6F60);
+
   @override
   Widget build(BuildContext context) {
     final appState = MyApp.of(context);
@@ -26,19 +34,23 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
     final b = _getBookById(widget.book.id);
 
     return Scaffold(
-      backgroundColor: const Color(0xfff2f2f2),
+      backgroundColor: bgColor,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF1976D2),
-        foregroundColor: Colors.white,
+        backgroundColor: bgColor,
+        foregroundColor: darkBrown,
         elevation: 0,
+        centerTitle: true,
         title: Text(
           b.title,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
-          style: const TextStyle(fontWeight: FontWeight.w800),
+          style: const TextStyle(
+            fontWeight: FontWeight.w800,
+            color: darkBrown,
+          ),
         ),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back_ios_new_rounded),
           onPressed: () => Navigator.pop(context),
         ),
         actions: [
@@ -49,26 +61,27 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
         ],
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(16, 14, 16, 20),
+        padding: const EdgeInsets.fromLTRB(16, 10, 16, 24),
         child: Column(
           children: [
             _cover(b),
-            const SizedBox(height: 18),
+            const SizedBox(height: 20),
             Text(
               b.title,
               textAlign: TextAlign.center,
               style: const TextStyle(
-                fontSize: 22,
+                fontSize: 24,
                 fontWeight: FontWeight.w900,
+                color: darkBrown,
               ),
             ),
-            const SizedBox(height: 6),
+            const SizedBox(height: 8),
             Text(
               b.author,
               textAlign: TextAlign.center,
               style: const TextStyle(
-                fontSize: 14,
-                color: Colors.black54,
+                fontSize: 15,
+                color: textSoft,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -96,23 +109,23 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
         width: 220,
         height: 300,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(18),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.12),
+              color: Colors.black.withOpacity(0.10),
               blurRadius: 18,
               offset: const Offset(0, 10),
             ),
           ],
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(18),
           child: Image.asset(
             b.coverUrl,
             fit: BoxFit.cover,
             errorBuilder: (context, error, stackTrace) {
               return Container(
-                color: Colors.grey.shade300,
+                color: const Color(0xFFEADFD7),
                 alignment: Alignment.center,
                 child: const Icon(
                   Icons.image_not_supported_outlined,
@@ -131,7 +144,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
     return Row(
       children: [
         Material(
-          color: Colors.white,
+          color: cardColor,
           borderRadius: BorderRadius.circular(18),
           child: InkWell(
             onTap: () {
@@ -150,13 +163,13 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
               height: 52,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(18),
-                border: Border.all(color: const Color(0xFFE5E7EB)),
+                border: Border.all(color: borderColor),
               ),
               child: Icon(
                 b.isFavorite
                     ? Icons.favorite_rounded
                     : Icons.favorite_border_rounded,
-                color: b.isFavorite ? Colors.redAccent : Colors.black54,
+                color: b.isFavorite ? const Color(0xFFD87C7C) : textSoft,
               ),
             ),
           ),
@@ -164,7 +177,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
         const SizedBox(width: 12),
         Expanded(
           child: Material(
-            color: const Color(0xFF1976D2),
+            color: primaryBrown,
             borderRadius: BorderRadius.circular(26),
             child: InkWell(
               onTap: () => _startReading(context, b, vi),
@@ -198,9 +211,16 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFE5E7EB)),
+        color: cardColor,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: borderColor),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.03),
+            blurRadius: 8,
+            offset: const Offset(0, 3),
+          ),
+        ],
       ),
       child: Row(
         children: [
@@ -210,21 +230,31 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                 final idx = i + 1;
                 return InkWell(
                   onTap: () => setState(() => _rating = idx),
-                  child: Icon(
-                    _rating >= idx
-                        ? Icons.star_rounded
-                        : Icons.star_border_rounded,
-                    color: const Color(0xFFFFB300),
+                  child: Padding(
+                    padding: const EdgeInsets.only(right: 2),
+                    child: Icon(
+                      _rating >= idx
+                          ? Icons.star_rounded
+                          : Icons.star_border_rounded,
+                      color: const Color(0xFFE0A85A),
+                    ),
                   ),
                 );
               }),
             ),
           ),
-          Text(
-            b.category,
-            style: const TextStyle(
-              color: Color(0xFF1976D2),
-              fontWeight: FontWeight.w900,
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+            decoration: BoxDecoration(
+              color: const Color(0xFFF1E4DB),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Text(
+              b.category,
+              style: const TextStyle(
+                color: primaryBrown,
+                fontWeight: FontWeight.w800,
+              ),
             ),
           ),
         ],
@@ -239,34 +269,48 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
 
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(14),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFE5E7EB)),
+        color: cardColor,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: borderColor),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.03),
+            blurRadius: 8,
+            offset: const Offset(0, 3),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            title,
-            style: const TextStyle(
-              fontWeight: FontWeight.w900,
-              fontSize: 16,
-            ),
+          const Row(
+            children: [
+              Icon(Icons.description_outlined, color: primaryBrown, size: 20),
+              SizedBox(width: 8),
+              Text(
+                "Mô tả",
+                style: TextStyle(
+                  fontWeight: FontWeight.w900,
+                  fontSize: 16,
+                  color: darkBrown,
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 12),
           Text(
             b.description,
             maxLines: _expanded ? null : 5,
             overflow: _expanded ? TextOverflow.visible : TextOverflow.ellipsis,
             style: const TextStyle(
-              color: Colors.black87,
-              height: 1.35,
+              color: darkBrown,
+              height: 1.5,
               fontWeight: FontWeight.w500,
             ),
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 12),
           Align(
             alignment: Alignment.centerLeft,
             child: InkWell(
@@ -274,7 +318,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
               child: Text(
                 _expanded ? less : more,
                 style: const TextStyle(
-                  color: Color(0xFF1976D2),
+                  color: primaryBrown,
                   fontWeight: FontWeight.w800,
                 ),
               ),
@@ -299,8 +343,10 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
     Clipboard.setData(ClipboardData(text: text));
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
+        backgroundColor: primaryBrown,
         content: Text(
           vi ? 'Đã copy thông tin sách' : 'Copied book info',
+          style: const TextStyle(color: Colors.white),
         ),
       ),
     );
