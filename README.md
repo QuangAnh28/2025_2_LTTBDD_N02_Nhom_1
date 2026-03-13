@@ -111,7 +111,7 @@ Bookify Architecture
 ### 1. Clone repository
 
 ```bash
-git clone https://github.com/yourusername/bookify.git
+git clone https://github.com/QuangAnh28/2025_2_LTTBDD_N02_Nhom_1.git
 ```
 
 ### 2. Di chuyển vào thư mục dự án
