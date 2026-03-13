@@ -71,47 +71,81 @@ Dự án được thực hiện trong khuôn khổ học phần **Lập trình c
 
 Ứng dụng **Bookify** được thiết kế theo **mô hình kiến trúc phân lớp (Layered Architecture)** nhằm tách biệt rõ ràng các thành phần của hệ thống, giúp ứng dụng dễ bảo trì, mở rộng và phát triển trong tương lai.
 
-
+```
 Bookify Architecture
 │
 ├── UI Layer (Screens)
-│ ├── HomeScreen
-│ ├── ExploreScreen
-│ ├── LibraryScreen
-│ ├── ReaderScreen
-│ ├── StatsScreen
-│ └── SettingsScreen
+│   ├── HomeScreen
+│   ├── ExploreScreen
+│   ├── LibraryScreen
+│   ├── ReaderScreen
+│   ├── StatsScreen
+│   └── SettingsScreen
 │
 ├── Data Layer
-│ ├── BookModel
-│ └── BooksData
+│   ├── BookModel
+│   └── BooksData
 │
 └── Core Layer
-└── AppState
-├── Theme
-├── Language
-└── Settings
+    └── AppState
+        ├── Theme
+        ├── Language
+        └── Settings
+```
+
+---
+
+## Các thành phần chính của hệ thống
+
+| Thành phần | Vai trò |
+|---|---|
+| Screens | Giao diện người dùng |
+| Models | Mô hình dữ liệu |
+| Data | Dữ liệu sách |
+| State Management | Quản lý trạng thái ứng dụng |
+
+---
+
 # ⚙️ Cài đặt và chạy dự án
 
-### 1 Clone repository
+### 1. Clone repository
 
 ```bash
 git clone https://github.com/yourusername/bookify.git
-### 2 Di chuyển vào thư mục
+```
+
+### 2. Di chuyển vào thư mục dự án
+
+```bash
 cd bookify
-### 3 Cài đặt dependencies
+```
+
+### 3. Cài đặt dependencies
+
+```bash
 flutter pub get
-### 4 Chạy ứng dụng
+```
+
+### 4. Chạy ứng dụng
+
+```bash
 flutter run
+```
 
-#👨‍💻 Nhóm thực hiện
-Nguyễn Thế Cường
-Email: 23010176@st.phenikaa-uni.edu.vn
+---
 
-Nguyễn Quốc Quang Anh
-Email: 23010173@st.phenikaa-uni.edu.vn
+# 👨‍💻 Nhóm thực hiện
 
-#🙏 Lời cảm ơn
+**Nguyễn Thế Cường**  
+Email: 23010176@st.phenikaa-uni.edu.vn  
 
-Nhóm em xin gửi lời cảm ơn chân thành tới thầy Nguyễn Xuân Quế đã hướng dẫn và hỗ trợ trong suốt quá trình thực hiện dự án.
-Những kiến thức và sự hướng dẫn của thầy là nền tảng quan trọng giúp nhóm có thể hoàn thành ứng dụng Bookify.
+**Nguyễn Quốc Quang Anh**  
+Email: 23010173@st.phenikaa-uni.edu.vn  
+
+---
+
+# 🙏 Lời cảm ơn
+
+Nhóm em xin gửi lời cảm ơn chân thành tới **thầy Nguyễn Xuân Quế** đã hướng dẫn và hỗ trợ trong suốt quá trình thực hiện dự án.
+
+Những kiến thức và sự hướng dẫn của thầy là nền tảng quan trọng giúp nhóm có thể hoàn thành ứng dụng **Bookify**.
