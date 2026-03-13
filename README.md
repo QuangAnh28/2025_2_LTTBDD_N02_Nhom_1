@@ -1,148 +1,127 @@
-📚 Bookify – Ứng dụng đọc sách điện tử
-📖 Thông tin dự án
+# 📚 Bookify – Ứng dụng đọc sách điện tử
 
-Bookify là một ứng dụng đọc sách điện tử được phát triển trên nền tảng Flutter dành cho thiết bị di động. Ứng dụng cho phép người dùng khám phá các đầu sách, đọc nội dung sách dưới dạng PDF, quản lý thư viện cá nhân và theo dõi quá trình đọc thông qua các thống kê trực quan.
+Bookify là một ứng dụng đọc sách điện tử được phát triển bằng **Flutter** dành cho thiết bị di động.  
+Ứng dụng cho phép người dùng khám phá sách, đọc nội dung dưới dạng **PDF**, quản lý thư viện cá nhân và theo dõi quá trình đọc thông qua các thống kê trực quan.
 
-Dự án được thực hiện trong khuôn khổ học phần Lập trình cho thiết bị di động.
+Dự án được thực hiện trong khuôn khổ học phần **Lập trình cho thiết bị di động**.
 
-Thông tin dự án
+---
 
-Tên ứng dụng: Bookify
+# 📌 Thông tin dự án
 
-Nền tảng: Flutter
+| Thuộc tính | Giá trị |
+|---|---|
+| Tên ứng dụng | Bookify |
+| Nền tảng | Flutter |
+| Ngôn ngữ | Dart |
+| Loại ứng dụng | E-book Reader |
 
-Ngôn ngữ: Dart
+---
 
-Loại ứng dụng: Ứng dụng đọc sách điện tử (E-book Reader)
+# ✨ Tính năng
 
-✨ Tính năng
+## 📚 Khám phá sách
 
-Ứng dụng cung cấp các chức năng chính sau:
+- Hiển thị danh sách các đầu sách trong hệ thống
+- Tìm kiếm sách theo **tên sách hoặc tác giả**
+- Lọc sách theo **danh mục**
 
-📚 Khám phá sách
+---
 
-Hiển thị danh sách các đầu sách trong hệ thống
+## 📖 Đọc sách
 
-Tìm kiếm sách theo tên
+- Mở và đọc sách dưới dạng **PDF**
+- Chuyển trang khi đọc
+- Phóng to / thu nhỏ nội dung
+- Lưu tiến độ đọc
 
-Lọc sách theo danh mục
+---
 
-📖 Đọc sách
+## ❤️ Thư viện cá nhân
 
-Mở và đọc sách dưới dạng PDF
+- Thêm sách vào **danh sách yêu thích**
+- Đánh dấu trang đang đọc
+- Quay lại trang đọc gần nhất
 
-Chuyển trang khi đọc
+---
 
-Phóng to / thu nhỏ nội dung
+## 📊 Thống kê đọc sách
 
-Lưu tiến độ đọc
+- Tổng số sách trong hệ thống
+- Tổng số trang đã đọc
+- Thời gian đọc
+- Số sách đã hoàn thành
+- Biểu đồ thống kê quá trình đọc
 
-❤️ Thư viện cá nhân
+---
 
-Thêm sách vào danh sách yêu thích
+## ⚙️ Cài đặt
 
-Đánh dấu trang đang đọc
+- Thay đổi ngôn ngữ (**Việt / Anh**)
+- Bật / tắt **Dark Mode**
+- Bật / tắt **Thông báo**
 
-Quay lại trang đọc gần nhất
+---
 
-📊 Thống kê đọc sách
+# 🖥 Demo giao diện
 
-Tổng số sách trong hệ thống
+---
 
-Tổng số trang đã đọc
+# 🏗 Kiến trúc hệ thống
 
-Thời gian đọc
-
-Số sách đã hoàn thành
-
-Biểu đồ thống kê quá trình đọc
-
-⚙️ Cài đặt
-
-Thay đổi ngôn ngữ (Việt / Anh)
-
-Bật / tắt Dark Mode
-
-Bật / tắt Thông báo
-
-🎬 Demo
-
-Một số màn hình chính của ứng dụng:
-
-Trang chủ
-
-Khám phá sách
-
-Màn hình đọc sách
-
-Thư viện cá nhân
-
-Thống kê
-
-Cài đặt
-
-📌 Demo ứng dụng:
-(Bạn có thể thêm ảnh hoặc video demo tại đây)
-
-Ví dụ:
-
-/demo
-   home.png
-   reader.png
-   library.png
-🏗 Kiến trúc
-
-Ứng dụng được thiết kế theo mô hình kiến trúc phân lớp, bao gồm:
-
+Ứng dụng được thiết kế theo **mô hình kiến trúc phân lớp (Layered Architecture)**.
 UI Layer (Screens)
-   │
-   ├── HomeScreen
-   ├── ExploreScreen
-   ├── LibraryScreen
-   ├── ReaderScreen
-   ├── StatsScreen
-   └── SettingsScreen
+│
+├── HomeScreen
+├── ExploreScreen
+├── LibraryScreen
+├── ReaderScreen
+├── StatsScreen
+└── SettingsScreen
 
 Data Layer
-   │
-   ├── Book Model
-   └── Books Data
+│
+├── BookModel
+└── BooksData
 
 Core Layer
-   │
-   └── App State (Theme, Language, Settings)
+│
+└── AppState
+├── Theme
+├── Language
+└── Settings
 
-Các thành phần chính của hệ thống:
+### Các thành phần chính của hệ thống
 
-Screens – giao diện người dùng
+| Thành phần | Vai trò |
+|---|---|
+| Screens | Giao diện người dùng |
+| Models | Mô hình dữ liệu |
+| Data | Dữ liệu sách |
+| State Management | Quản lý trạng thái ứng dụng |
 
-Models – mô hình dữ liệu
+---
 
-Data – dữ liệu sách
+# ⚙️ Cài đặt và chạy dự án
 
-State Management – quản lý trạng thái ứng dụng
+### 1 Clone repository
 
-⚙️ Cài đặt
-1️⃣ Clone repository
+```bash
 git clone https://github.com/yourusername/bookify.git
-2️⃣ Di chuyển vào thư mục dự án
+2 Di chuyển vào thư mục dự án
 cd bookify
-3️⃣ Cài đặt dependencies
+3 Cài đặt dependencies
 flutter pub get
-4️⃣ Chạy ứng dụng
+4 Chạy ứng dụng
 flutter run
-📬 Liên hệ
-
-Nhóm thực hiện
+👨‍💻 Nhóm thực hiện
 
 Nguyễn Thế Cường
 Email: 23010176@st.phenikaa-uni.edu.vn
 
 Nguyễn Quốc Quang Anh
 Email: 23010173@st.phenikaa-uni.edu.vn
-
 🙏 Lời cảm ơn
 
-Nhóm xin gửi lời cảm ơn chân thành tới giảng viên Nguyễn Xuân Quế đã hướng dẫn và hỗ trợ trong suốt quá trình thực hiện dự án.
-
+Nhóm em xin gửi lời cảm ơn chân thành tới thầy Nguyễn Xuân Quế đã hướng dẫn và hỗ trợ trong suốt quá trình thực hiện dự án.
 Những kiến thức và sự hướng dẫn của thầy là nền tảng quan trọng giúp nhóm có thể hoàn thành ứng dụng Bookify.
