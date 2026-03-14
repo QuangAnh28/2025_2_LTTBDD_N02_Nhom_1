@@ -98,7 +98,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
-                      isVietnamese ? "MSSV:" : "ID:",
+                      isVietnamese ? "MSSV" : "ID",
                       style: const TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.w700,
@@ -120,8 +120,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           icon: Icons.book_rounded,
                           label: isVietnamese ? "Dự án" : "Project",
                           value: isVietnamese
-                              ? "BookReader - Ứng dụng đọc sách"
-                              : "BookReader - Reading app",
+                              ? "Bookify - Ứng dụng đọc sách điện tử"
+                              : "Bookify - Reading app",
                         ),
                         const SizedBox(height: 12),
                         _infoRow(
@@ -496,8 +496,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         content: SingleChildScrollView(
           child: Text(
             isVietnamese
-                ? """Dự án: E-book Reading - Ứng dụng đọc sách điện tử
-
+                ? """
 Lớp: Lập trình cho thiết bị di động 1-2-25(N02)
 Giảng viên: Nguyễn Xuân Quế
 Nhóm: 1
@@ -514,7 +513,7 @@ Email:
 23010176@st.phenikaa-uni.edu.vn
 23010173@st.phenikaa-uni.edu.vn
 """
-                : """Project: E-book Reading Application
+                : """
 
 Class: Mobile Programming 1-2-25(N02)
 Lecturer: Nguyen Xuan Que
